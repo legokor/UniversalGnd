@@ -1,0 +1,9 @@
+#map {
+    height: 400px;
+    width: 100%;
+}
+
+.panel {
+    display: inline-block;
+    width: 30%;
+}
