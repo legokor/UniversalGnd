@@ -1,0 +1,47 @@
+*, *::before, *::after {
+  box-sizing:border-box;
+}
+
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+input[type=checkbox] {
+  height: 3em;
+  width: 3em;
+}
+
+.progress {
+  display: table-cell;
+  vertical-align: middle;
+  border: 1px solid black;
+  padding: 5px 20px;
+  background-color: #cecece;
+  text-align: center;
+}
+
+.progress.completed {
+  background-color: #00ff00;
+}
+
+div {
+  height: 100%;
+}
+
+#leading-list {
+  width: 80%;
+  display: inline-block;
+  text-align: right;
+}
+
+#final-element {
+  width: 20%;
+  display: inline-block;
+}
+
+#final-element > div {
+  width: 100%;
+}

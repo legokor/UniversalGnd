@@ -1,0 +1,18 @@
+{% load static %}
+<!doctype html>
+<html>
+<head>
+  <title>UPRA</title>
+  <meta name='viewport' content='width=device-width'>
+  <link rel='stylesheet' href='{% static 'checklist/css/main.css' %}'>
+  <link rel='shortcut icon' href='{% static 'checklist/img/icon.png' %}'>
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Condensed' rel='stylesheet'>
+</head>
+<body>
+    <div id='notice'></div>
+    {% block content %}
+    {% endblock %}
+    <p>The current time is <span id='current-time'></span> UTC</p>
+    <script src='{% static 'checklist/js/common.js' %}'></script>
+</body>
+</html>
