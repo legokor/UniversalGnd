@@ -11,9 +11,10 @@
 </head>
 <body>
 <div id='notice'></div>
-{% block content %}
-{% endblock %}
+<div id='task-matrix'>
+</div>
 <p>The current time is <span id='current-time'></span> UTC</p>
+<script src='{% static 'js/main.js' %}'></script>
 <script src='{% static 'js/common.js' %}'></script>
 </body>
 </html>

@@ -28,5 +28,5 @@ def toggle(request, id):
     else:
         task.actual_timestamp = timezone.now()
     task.save()
-    broadcast({'id': task.id, 'actual_timestamp': task.actual_timestamp})
+    broadcast(task.serialized_fields())
     return HttpResponse(request, "")

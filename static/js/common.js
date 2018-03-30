@@ -1,4 +1,4 @@
-let checklist = [];
+let socket = null;
 
 function prettifyNumber(number) {
     return number < 10 ? "0" + number : number.toString();
@@ -16,45 +16,39 @@ function getUTCStringFromDate(date) {
 
 function updateCurrentTime() {
     let timeDiv = document.getElementById("current-time");
-    timeDiv.innerHTML = getUTCStringFromDate(new Date());
+    timeDiv.innerText = getUTCStringFromDate(new Date());
 }
 
-function loadChecklist(checklistUrl = 'tracker/') {
-    let notice = document.getElementById("notice");
+function updateTask(data) {
+    let taskDiv = document.getElementById("task-" + data.id);
+    if (data.actual_timestamp !== null) {
+        taskDiv.classList.add('completed');
+    } else {
+        taskDiv.classList.remove('completed');
+    }
+}
 
-    let request = new XMLHttpRequest();
-    request.onreadystatechange = function () {
-        if (request.readyState === XMLHttpRequest.DONE) {
-            if (request.status === 200) {
-                let response = JSON.parse(request.responseText);
-                if (response.length === 0) {
-                    notice.innerHTML = "Empty";
-                    return;
-                }
-                if (request.responseText === JSON.stringify(checklist)) {
-                    return;
-                }
-                checklist = [];
-                response.forEach(function (item) {
-                    checklist.push(item);
-                });
-                checklist.sort(function (a, b) {
-                    if (a.projected_timestamp < b.projected_timestamp) return -1;
-                    if (a.projected_timestamp > b.projected_timestamp) return 1;
-                    return 0;
-                });
-                printChecklist();
-            } else {
-                notice.innerHTML = "Failed to load data, try refreshing";
-            }
+function initWebsocket(url) {
+    socket = new WebSocket("ws://" + url);
+    socket.onopen = function (event) {
+        loadChecklist(1);
+    };
+    socket.onmessage = function (event) {
+        let data = JSON.parse(event.data);
+        if (Array.isArray(data)) {
+            printChecklist(data);
+        } else {
+            updateTask(data);
         }
     };
+}
 
-    request.open('GET', checklistUrl);
-    request.send();
+function loadChecklist(checklistId) {
+    socket.send(JSON.stringify({'action': "fetch", 'id': checklistId}))
 }
 
 updateCurrentTime();
+initWebsocket("localhost:8000/ws");
 window.setInterval(function () {
     updateCurrentTime();
 }, 1000);

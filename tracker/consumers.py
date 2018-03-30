@@ -3,20 +3,26 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 import json
 
+from .models import Launch
+
 
 def broadcast(message):
     layer = channels.layers.get_channel_layer()
     async_to_sync(layer.group_send)(
         "group",
-        message
+        {
+            'type': "task_update",
+            'message': message,
+        }
     )
+    print('sent')
 
 
 class Consumer(WebsocketConsumer):
     def connect(self):
         async_to_sync(self.channel_layer.group_add)(
             "group",
-            "channel"
+            self.channel_name
         )
         print('ws connected')
         self.accept()
@@ -24,13 +30,20 @@ class Consumer(WebsocketConsumer):
     def disconnect(self, close_code):
         async_to_sync(self.channel_layer.group_discard)(
             "group",
-            "channel"
+            self.channel_name
         )
 
-    def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message = text_data_json['message']
+    def task_update(self, event):
+        print('helo')
+        self.send(text_data=json.dumps(event['message']))
 
-        self.send(text_data=json.dumps({
-            'message': message
-        }))
+    def receive(self, text_data):
+        data = json.loads(text_data)
+        print(data)
+        if data['action'] == 'fetch':
+            try:
+                launch = Launch.objects.get(pk=data['id'])
+            except Launch.DoesNotExist:
+                self.send(text_data=json.dumps({'message': 'Does not exist'}))
+            else:
+                self.send(text_data=json.dumps([task.serialized_fields() for task in launch.task_set.all()]))
