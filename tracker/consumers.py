@@ -35,7 +35,7 @@ class Consumer(WebsocketConsumer):
 
     def task_update(self, event):
         print('helo')
-        self.send(text_data=json.dumps(event['message']))
+        self.send(text_data=json.dumps({'taskData': event['message']}))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -46,4 +46,4 @@ class Consumer(WebsocketConsumer):
             except Launch.DoesNotExist:
                 self.send(text_data=json.dumps({'message': 'Does not exist'}))
             else:
-                self.send(text_data=json.dumps([task.serialized_fields() for task in launch.task_set.all()]))
+                self.send(text_data=json.dumps({'tasks': [task.serialized_fields() for task in launch.task_set.all()]}))

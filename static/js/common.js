@@ -34,11 +34,16 @@ function initWebsocket(url) {
         loadChecklist(1);
     };
     socket.onmessage = function (event) {
+        displayMessage(event.data);
         let data = JSON.parse(event.data);
-        if (Array.isArray(data)) {
-            printChecklist(data);
-        } else {
-            updateTask(data);
+        if ('tasks' in data) {
+            printChecklist(data.tasks);
+        } else if ('taskData' in data) {
+            updateTask(data.taskData);
+        } else if ('lat' in data) {
+            parseCoordinatesMessage(data);
+        } else if ('timestamp' in data) {
+            parseGenericMessage(data);
         }
     };
 }

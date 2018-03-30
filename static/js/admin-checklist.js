@@ -29,3 +29,5 @@ function printChecklist(checklist) {
         listDiv.appendChild(element);
     });
 }
+
+function displayMessage(a) {}

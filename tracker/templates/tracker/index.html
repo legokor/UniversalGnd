@@ -3,56 +3,57 @@
 {% load static %}
 
 {% block content %}
-<h1>UPRA checklist</h1>
-<div id='task-matrix'>
-</div>
-<div id='map'></div>
-<div id='secondary'>
-    <div class='panel'>
-        <div id='coordinates'></div>
-        <div id='response'>
-            <input id='text' placeholder='Message'>
-            <button id='send'>
-                Send
-            </button>
+    <h1>UPRA checklist</h1>
+    <div id='task-matrix'>
+    </div>
+    <div id='map'></div>
+    <div id='secondary'>
+        <div class='panel'>
+            <div id='coordinates'></div>
+            <div id='response'>
+                <input id='text' placeholder='Message'>
+                <button id='send'>
+                    Send
+                </button>
+            </div>
+            <div id='controls'>
+                <table>
+                    <tr>
+                        <td><label for='roll'>Roll</label></td>
+                        <td><input type='range' min='0' max='360' value='0' id='roll'></td>
+                        <td><input id='roll-value' disabled></td>
+                    </tr>
+                    <tr>
+                        <td><label for='pitch'>Pitch</label></td>
+                        <td><input type='range' min='0' max='360' value='0' id='pitch'></td>
+                        <td><input id='pitch-value' disabled></td>
+                    </tr>
+                    <tr>
+                        <td><label for='yaw'>Yaw</label></td>
+                        <td><input type='range' min='0' max='360' value='0' id='yaw'></td>
+                        <td><input id='yaw-value' disabled></td>
+                    </tr>
+                    <tr>
+                        <td><label for='throttle'>Throttle</label></td>
+                        <td><input type='range' min='0' max='100' value='0' id='throttle'></td>
+                        <td><input id='throttle-value' disabled></td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <div id='controls'>
-            <table>
-                <tr>
-                    <td><label for="roll">Roll</label></td>
-                    <td><input type='range' min='0' max='360' value='0' id='roll'></td>
-                    <td><input id="roll-value" disabled></td>
-                </tr>
-                <tr>
-                    <td><label for="pitch">Pitch</label></td>
-                    <td><input type='range' min='0' max='360' value='0' id='pitch'></td>
-                    <td><input id="pitch-value" disabled></td>
-                </tr>
-                <tr>
-                    <td><label for="yaw">Yaw</label></td>
-                    <td><input type='range' min='0' max='360' value='0' id='yaw'></td>
-                    <td><input id="yaw-value" disabled></td>
-                </tr>
-                <tr>
-                    <td><label for="throttle">Throttle</label></td>
-                    <td><input type='range' min='0' max='100' value='0' id='throttle'></td>
-                    <td><input id="throttle-value" disabled></td>
-                </tr>
-            </table>
+        <div class='panel'>
+            <canvas id='altitudeChart'></canvas>
+        </div>
+        <div class='panel'>
+            <canvas id='speedChart'></canvas>
         </div>
     </div>
-    <div class='panel'>
-        <canvas id='altitudeChart'></canvas>
-    </div>
-    <div class='panel'>
-        <canvas id='speedChart'></canvas>
-    </div>
-</div>
-<script src="{% static 'js/main.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-<script src="{% static 'js/index.js' %}"></script>
-<script src="{% static 'js/charts.js' %}"></script>
-<script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtUYHs8xps4PTubrdK_06o8SMxFS41sFo&callback=initMap">
-</script>
+    <script src='{% static 'js/checklist.js' %}'></script>
+    <script src='{% static 'js/map.js' %}'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js'></script>
+    <script src='{% static 'js/visualizer.js' %}'></script>
+    <script src='{% static 'js/charts.js' %}'></script>
+    <script async defer
+            src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAtUYHs8xps4PTubrdK_06o8SMxFS41sFo&callback=initMap'>
+    </script>
 {% endblock %}
