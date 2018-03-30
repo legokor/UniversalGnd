@@ -1,8 +1,7 @@
-# In routing.py
-from channels.routing import route
-from .consumers import ws_connect, ws_receive
+from django.urls import path
 
-channel_routing = [
-    route("websocket.connect", ws_connect),
-    route("websocket.receive", ws_receive),
+from . import consumers
+
+websocket_urlpatterns = [
+    path('ws', consumers.Consumer),
 ]

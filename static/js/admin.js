@@ -33,6 +33,6 @@ function printChecklist() {
 }
 
 window.setInterval(function() {
-  loadChecklist('../checklist/');
+  loadChecklist('../tracker/');
   updateCurrentTime();
 }, 1000);

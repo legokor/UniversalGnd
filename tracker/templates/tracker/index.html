@@ -1,10 +1,11 @@
-<!doctype html>
-<html>
-<head>
-    <title>Debug</title>
-    <link rel="stylesheet" href="/static/css/index.css" type="text/css">
-</head>
-<body>
+{% extends 'tracker/base.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>UPRA checklist</h1>
+<div id='task-matrix'>
+</div>
 <div id='map'></div>
 <div id='secondary'>
     <div class='panel'>
@@ -47,11 +48,11 @@
         <canvas id='speedChart'></canvas>
     </div>
 </div>
+<script src="{% static 'js/main.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
-<script src="/static/js/index.js"></script>
-<script src="/static/js/charts.js"></script>
+<script src="js/index.js"></script>
+<script src="js/charts.js"></script>
 <script async defer
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAtUYHs8xps4PTubrdK_06o8SMxFS41sFo&callback=initMap">
 </script>
-</body>
-</html>
+{% endblock %}

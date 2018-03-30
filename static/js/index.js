@@ -1,4 +1,4 @@
-let socket = new WebSocket("ws://152.66.156.206:8000/");
+let socket = new WebSocket("ws://localhost:8000/ws/");
 let map = undefined;
 let flightPath = undefined;
 let coordinatesArray = [];
