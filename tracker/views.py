@@ -8,7 +8,7 @@ from .consumers import broadcast
 
 
 def index(request):
-    return render(request, 'tracker/base.html')
+    return render(request, 'tracker/index.html')
 
 
 @login_required(login_url='/admin/login/')

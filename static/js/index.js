@@ -1,4 +1,3 @@
-let socket = new WebSocket("ws://localhost:8000/ws/");
 let map = undefined;
 let flightPath = undefined;
 let coordinatesArray = [];
@@ -28,10 +27,6 @@ let controlFields = {
 
 let charts = {};
 
-socket.onopen = function (event) {
-    console.log("WebSocket.onopen");
-};
-
 function parseCoordinatesMessage(data) {
     // parse GPS message
     let coordinates = data;
@@ -53,7 +48,7 @@ function parseCoordinatesMessage(data) {
 }
 
 function parseGenericMessage(data) {
-    for (key in data) {
+    for (let key in data) {
         if (key in charts) {
             let chart = charts[key];
             if (chart.data.datasets[0].data.length > 10) {
@@ -68,20 +63,21 @@ function parseGenericMessage(data) {
 function displayMessage(data) {
     document.getElementById('coordinates').innerHTML = data;
 }
-
-socket.onmessage = function (event) {
-    let data = JSON.parse(event.data);
-
-    displayMessage(event.data);
-
-    if ('lat' in data) {
-        parseCoordinatesMessage(data);
-    } else if ('timestamp' in data) {
-        parseGenericMessage(data);
-    }
-};
+    //
+    // socket.onmessage = function (event) {
+    //     let data = JSON.parse(event.data);
+    //
+    //     displayMessage(event.data);
+    //
+    //     if ('lat' in data) {
+    //         parseCoordinatesMessage(data);
+    //     } else if ('timestamp' in data) {
+    //         parseGenericMessage(data);
+    //     }
+    // };
 
 function initMap() {
+    console.log('hi');
     let coordinates = {lat: 47.4734, lng: 19.0598};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 20,
