@@ -5,7 +5,7 @@ function printChecklist(checklist) {
         listDiv.removeChild(listDiv.lastChild);
     }
 
-    checklist.forEach(function (item, index) {
+    checklist.forEach(function (item) {
         let date = new Date(item.projected_timestamp * 1000);
         let timeString = getUTCStringFromDate(date);
 

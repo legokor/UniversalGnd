@@ -1,5 +1,5 @@
 from django.db import models
-import time
+from django.utils.dateformat import format
 
 
 class Launch(models.Model):
@@ -25,6 +25,6 @@ class Task(models.Model):
         return {
             'id': self.id,
             'title': self.title,
-            'projected_timestamp': time.mktime(self.projected_timestamp.timetuple()),
-            'actual_timestamp': time.mktime(self.actual_timestamp.timetuple()) if self.actual_timestamp is not None else None,
+            'projected_timestamp': format(self.projected_timestamp, 'U'),
+            'actual_timestamp': format(self.actual_timestamp, 'U') if self.actual_timestamp is not None else None,
         }
