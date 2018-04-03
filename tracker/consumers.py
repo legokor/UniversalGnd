@@ -15,7 +15,6 @@ def broadcast(message):
             'message': message,
         }
     )
-    print('sent')
 
 
 class Consumer(WebsocketConsumer):
@@ -24,7 +23,6 @@ class Consumer(WebsocketConsumer):
             "group",
             self.channel_name
         )
-        print('ws connected')
         self.accept()
 
     def disconnect(self, close_code):
@@ -34,12 +32,10 @@ class Consumer(WebsocketConsumer):
         )
 
     def task_update(self, event):
-        print('helo')
         self.send(text_data=json.dumps({'taskData': event['message']}))
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
         if data['action'] == 'fetch':
             try:
                 launch = Launch.objects.get(pk=data['id'])

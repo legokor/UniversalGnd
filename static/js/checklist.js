@@ -20,3 +20,17 @@ function printChecklist(checklist) {
         listDiv.appendChild(element);
     });
 }
+
+function messageParse(event) {
+    displayMessage(event.data);
+    let data = JSON.parse(event.data);
+    if ('tasks' in data) {
+        printChecklist(data.tasks);
+    } else if ('taskData' in data) {
+        updateTask(data.taskData);
+    } else if ('lat' in data) {
+        parseCoordinatesMessage(data);
+    } else if ('timestamp' in data) {
+        parseGenericMessage(data);
+    }
+}

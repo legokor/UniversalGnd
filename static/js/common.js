@@ -31,21 +31,9 @@ function updateTask(data) {
 function initWebsocket(url) {
     socket = new WebSocket("ws://" + url);
     socket.onopen = function (event) {
-        loadChecklist(1);
+        loadChecklist(2);
     };
-    socket.onmessage = function (event) {
-        displayMessage(event.data);
-        let data = JSON.parse(event.data);
-        if ('tasks' in data) {
-            printChecklist(data.tasks);
-        } else if ('taskData' in data) {
-            updateTask(data.taskData);
-        } else if ('lat' in data) {
-            parseCoordinatesMessage(data);
-        } else if ('timestamp' in data) {
-            parseGenericMessage(data);
-        }
-    };
+    socket.onmessage = messageParse;
 }
 
 function loadChecklist(checklistId) {

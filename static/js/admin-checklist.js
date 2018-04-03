@@ -30,4 +30,9 @@ function printChecklist(checklist) {
     });
 }
 
-function displayMessage(a) {}
+function messageParse(event) {
+    let data = JSON.parse(event.data);
+    if ('tasks' in data) {
+        printChecklist(data.tasks);
+    }
+}
