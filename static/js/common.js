@@ -41,7 +41,7 @@ function loadChecklist(checklistId) {
 }
 
 updateCurrentTime();
-initWebsocket("localhost:8000/ws");
+initWebsocket(window.location.host + "/ws");
 window.setInterval(function () {
     updateCurrentTime();
 }, 1000);

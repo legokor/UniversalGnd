@@ -36,6 +36,7 @@ class Consumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        print(data)
         if data['action'] == 'fetch':
             try:
                 launch = Launch.objects.get(pk=data['id'])
