@@ -5,6 +5,7 @@ import threading
 def listen():
     while running:
         connection, address = sck.accept()
+        print('client connected')
         thread = threading.Thread(target=digest_message, args=(connection,))
         thread.daemon = True
         thread.start()

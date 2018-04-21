@@ -73,7 +73,9 @@ class Consumer(WebsocketConsumer):
 
         if data['action'] == 'button-click':
             if self.wrapper:
-                self.wrapper.send(MAM_MESSAGES[data['id']])
+                message = MAM_MESSAGES.get(str(data['id']), '')
+                print('msg:' + message)
+                self.wrapper.send(message)
 
         if data['action'] == 'send':
             if self.wrapper:
