@@ -6,7 +6,7 @@ class Connector:
         self._listening = False
         self._callback = lambda: None
 
-    def start__listening(self, callback):
+    def start_listening(self, callback):
         self._callback = callback
         if not self.listening:
             thread = threading.Thread(target=self.listen)
@@ -14,7 +14,7 @@ class Connector:
             thread.start()
         self._listening = True
 
-    def stop__listening(self):
+    def stop_listening(self):
         if self.listening:
             self.destruct()
         self._listening = False
@@ -26,6 +26,10 @@ class Connector:
     @property
     def callback(self):
         return self._callback
+
+    @callback.setter
+    def callback(self, cb):
+        self._callback = cb
 
     def send(self, message):
         pass

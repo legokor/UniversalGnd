@@ -16,12 +16,8 @@ class SerialConnector(Connector):
 
     def listen(self):
         while self.listening:
-            message = self.connection.read(64)
+            message = self.connection.read(1)
             self.callback(message)
 
     def destruct(self):
         self.connection.close()
-
-
-class UpraConnector(SerialConnector):
-    message_format = '^\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),$'
