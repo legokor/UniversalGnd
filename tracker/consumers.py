@@ -1,11 +1,12 @@
-import channels.layers
-from channels.generic.websocket import WebsocketConsumer
-from asgiref.sync import async_to_sync
 import json
 
-from .models import Launch
+import channels.layers
+from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
+
 from workers.socket_connector import SocketConnector
 from workers.wrapper import Wrapper
+from .models import Launch
 
 
 def broadcast(message):
@@ -63,18 +64,15 @@ class Consumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
         if data['action'] == 'init':
             if data['target'] == 'mam':
                 self.connector = SocketConnector('127.0.0.1', 1360)
-                self.wrapper = Wrapper(r'.', broadcast, self.connector.send)
-                self.connector.callback = self.wrapper.consume_character
-                self.connector.listen()
+                self.wrapper = Wrapper(r'.*', print, self.connector.send)  # TODO: replace print
+                self.connector.start_listening(callback=self.wrapper.consume_character)
 
         if data['action'] == 'button-click':
             if self.wrapper:
                 message = MAM_MESSAGES.get(str(data['id']), '')
-                print('msg:' + message)
                 self.wrapper.send(message)
 
         if data['action'] == 'send':

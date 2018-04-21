@@ -9,11 +9,10 @@ class Wrapper:
         self.buffer = ""
 
     def consume_character(self, char):
-        self.buffer += char
-        if len(self.buffer) == len(self.pattern):
-            if re.match(self.pattern, self.buffer):
-                self.digest_message(self.buffer)
-                self.buffer = ""
+        self.buffer += str(char)
+        if re.match(self.pattern, self.buffer):
+            self.digest_message(self.buffer)
+            self.buffer = ""
 
     def digest_message(self, message):
         self.consumer(message)

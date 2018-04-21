@@ -13,7 +13,11 @@ def listen():
 
 def digest_message(conn):
     while running:
-        print(conn.recv(1))
+        digest = conn.recv(1)
+        print(digest)
+        if digest == b'o':
+            print('sending')
+            conn.send(bytes('test message', 'UTF-8'))
 
 
 running = True

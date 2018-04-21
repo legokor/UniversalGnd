@@ -9,10 +9,10 @@ class Connector:
     def start_listening(self, callback):
         self._callback = callback
         if not self.listening:
+            self._listening = True
             thread = threading.Thread(target=self.listen)
             thread.daemon = True
             thread.start()
-        self._listening = True
 
     def stop_listening(self):
         if self.listening:
