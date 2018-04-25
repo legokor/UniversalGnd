@@ -34,6 +34,12 @@ function initWebsocket(url) {
         loadChecklist(2);
     };
     socket.onmessage = messageParse;
+    socket.onerror = function() {
+        alert('error!');
+    };
+    socket.onclose = function () {
+        alert('Connection to the server was lost, refresh to reconnect!');
+    };
 }
 
 function loadChecklist(checklistId) {
