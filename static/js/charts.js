@@ -18,13 +18,13 @@ charts["altitude"] = new Chart(ctx, {
     }
 });
 
-let ctx2 = document.getElementById("speedChart");
+let ctx2 = document.getElementById("extTempChart");
 
-charts["speed"] = new Chart(ctx2, {
+charts["exttemp"] = new Chart(ctx2, {
     type: 'scatter',
     data: {
         datasets: [{
-            label: 'Speed (meters/second)',
+            label: 'External temperature (Celsius)',
             backgroundColor: 'rgba(255, 153, 51, 1)',
             data: [],
         }],
@@ -33,7 +33,7 @@ charts["speed"] = new Chart(ctx2, {
         showLines: true,
         title: {
             display: true,
-            text: "Speed",
+            text: "Temperature",
         }
     }
 });

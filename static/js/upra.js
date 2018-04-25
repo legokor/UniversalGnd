@@ -19,4 +19,6 @@ function upraParse(data) {
     var long = longdeg + longmin / 60;
     console.log(longdeg, longmin, long);
     parseCoordinatesMessage({'lat': lat, 'lng': long});
+    parseGenericMessage({'altitude': data.altitude, 'timestamp': data.hours * 60 * 60 + data.minutes * 60 + data.seconds});
+    parseGenericMessage({'exttemp': data.externaltemp, 'timestamp': data.hours * 60 * 60 + data.minutes * 60 + data.seconds});
 }
