@@ -1,4 +1,5 @@
 import json
+import re
 
 import channels.layers
 from asgiref.sync import async_to_sync
@@ -14,13 +15,35 @@ def broadcast(message):
     async_to_sync(layer.group_send)(
         "group",
         {
-            'type': "task_update",
+            'type': "basic_send",
             'message': message,
         }
     )
 
 
-UPRA_STRING = r'^\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),$'
+def broadcast_string(message):
+    print('sending string: ' + message)
+    broadcast({'message': message})
+
+
+def parse_upra(message):
+    match = re.match(UPRA_STRING, message)
+    broadcast({'type': 'upra', 'data': {
+        'callsign': match.group(1),
+        'messageid': match.group(2),
+        'hours': match.group(3),
+        'minutes': match.group(4),
+        'seconds': match.group(5),
+        'latitude': match.group(6),
+        'longitude': match.group(7),
+        'altitude': match.group(8),
+        'externaltemp': match.group(9),
+        'obctemp': match.group(10),
+        'comtemp': match.group(11),
+    }})
+
+
+UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 
 MAM_MESSAGES = {
     '1': 'ELORE',
@@ -59,6 +82,9 @@ class Consumer(WebsocketConsumer):
             self.channel_name
         )
 
+    def basic_send(self, event):
+        self.send(text_data=json.dumps(event['message']))
+
     def task_update(self, event):
         self.send(text_data=json.dumps({'taskData': event['message']}))
 
@@ -67,7 +93,12 @@ class Consumer(WebsocketConsumer):
         if data['action'] == 'init':
             if data['target'] == 'mam':
                 self.connector = SocketConnector('127.0.0.1', 1360)
-                self.wrapper = Wrapper(r'.*', print, self.connector.send)  # TODO: replace print
+                self.wrapper = Wrapper(r'.*', broadcast_string, self.connector.send)
+                self.connector.start_listening(callback=self.wrapper.consume_character)
+
+            if data['target'] == 'upra':
+                self.connector = SocketConnector('127.0.0.1', 1337)
+                self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 
         if data['action'] == 'button-click':

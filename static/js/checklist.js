@@ -22,15 +22,20 @@ function printChecklist(checklist) {
 }
 
 function messageParse(event) {
+    console.log(event.data);
     displayMessage(event.data);
     let data = JSON.parse(event.data);
-    if ('tasks' in data) {
-        printChecklist(data.tasks);
-    } else if ('taskData' in data) {
-        updateTask(data.taskData);
-    } else if ('lat' in data) {
-        parseCoordinatesMessage(data);
-    } else if ('timestamp' in data) {
-        parseGenericMessage(data);
+    if (data.type === 'upra') {
+        upraParse(data.data);
+    } else {
+        if ('tasks' in data) {
+            printChecklist(data.tasks);
+        } else if ('taskData' in data) {
+            updateTask(data.taskData);
+        } else if ('lat' in data) {
+            parseCoordinatesMessage(data);
+        } else if ('timestamp' in data) {
+            parseGenericMessage(data);
+        }
     }
 }

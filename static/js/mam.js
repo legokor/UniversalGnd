@@ -7,7 +7,7 @@ for (var i = 1; i <= 8; ++i) {
     })(i);
 }
 
-var initButton = document.getElementById('init-mam');
-initButton.addEventListener('click', function (event) {
+var initButtonMam = document.getElementById('init-mam');
+initButtonMam.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'init', 'target': 'mam'}));
 });

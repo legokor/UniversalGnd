@@ -24,7 +24,7 @@ function parseCoordinatesMessage(data) {
 function initMap() {
     let coordinates = {lat: 47.4734, lng: 19.0598};
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 20,
+        zoom: 16,
         center: coordinates,
         mapTypeId: 'hybrid',
     });
