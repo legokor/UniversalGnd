@@ -10,6 +10,7 @@ class SerialConnector(Connector):
         self.connection.baudrate = baud
         self.connection.port = port
         self.connection.open()
+        print('Connected to serial port {}'.format(port))
 
     def send(self, message):
         self.connection.write(message.encode('ascii'))

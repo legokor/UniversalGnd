@@ -6,6 +6,7 @@ from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
 from workers.socket_connector import SocketConnector
+from workers.serial_connector import SerialConnector
 from workers.wrapper import Wrapper
 from .models import Launch
 
@@ -22,7 +23,6 @@ def broadcast(message):
 
 
 def broadcast_string(message):
-    print('sending string: ' + message)
     broadcast({'message': message})
 
 
@@ -57,12 +57,6 @@ MAM_MESSAGES = {
 }
 
 
-def initiate_upra_wrapper(address, port):
-    sc = SocketConnector(address, port)
-    wrapper = Wrapper(UPRA_STRING, broadcast, sc.send)
-    sc.callback = wrapper.consume_character
-
-
 class Consumer(WebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -92,7 +86,12 @@ class Consumer(WebsocketConsumer):
         data = json.loads(text_data)
         if data['action'] == 'init':
             if data['target'] == 'mam':
-                self.connector = SocketConnector('127.0.0.1', 1360)
+                self.connector = SerialConnector(115200, 'COM4')
+                self.wrapper = Wrapper(r'\d{8}', broadcast_string, self.connector.send)
+                self.connector.start_listening(callback=self.wrapper.consume_character)
+
+            if data['target'] == 'mam-send':
+                self.connector = SocketConnector('192.168.4.1', 1360)
                 self.wrapper = Wrapper(r'.*', broadcast_string, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 
