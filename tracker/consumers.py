@@ -1,12 +1,13 @@
 import json
 import re
+from functools import partial
 
 import channels.layers
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
-from workers.socket_connector import SocketConnector
 from workers.serial_connector import SerialConnector
+from workers.socket_connector import SocketConnector
 from workers.wrapper import Wrapper
 from .models import Launch
 
@@ -43,17 +44,27 @@ def parse_upra(message):
     }})
 
 
+def mam_transfer(callback, message):
+    try:
+        message = MAM_MESSAGES[message]
+    except KeyError:
+        pass
+    else:
+        broadcast_string(message)
+        callback(message)
+
+
 UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 
 MAM_MESSAGES = {
-    '1': 'ELORE',
-    '2': 'HATRA',
-    '3': 'JOBBRA',
-    '4': 'BALRA',
-    '5': 'KARLE',
-    '6': 'KARFEL',
-    '7': 'VILLOG',
-    '8': 'MEGALL',
+    '11111110': 'ELORE',
+    '11111101': 'HATRA',
+    '11111011': 'JOBBRA',
+    '11110111': 'BALRA',
+    '11101111': 'KARLE',
+    '11011111': 'KARFEL',
+    '10111111': 'VILLOG',
+    '01111111': 'MEGALL',
 }
 
 
@@ -62,6 +73,8 @@ class Consumer(WebsocketConsumer):
         super().__init__(*args, **kwargs)
         self.wrapper = None
         self.connector = None
+        self.connector_socket = None
+        self.wrapper_socket = None
 
     def connect(self):
         async_to_sync(self.channel_layer.group_add)(
@@ -87,12 +100,11 @@ class Consumer(WebsocketConsumer):
         if data['action'] == 'init':
             if data['target'] == 'mam':
                 self.connector = SerialConnector(115200, 'COM4')
-                self.wrapper = Wrapper(r'\d{8}', broadcast_string, self.connector.send)
-                self.connector.start_listening(callback=self.wrapper.consume_character)
-
-            if data['target'] == 'mam-send':
-                self.connector = SocketConnector('192.168.4.1', 1360)
-                self.wrapper = Wrapper(r'.*', broadcast_string, self.connector.send)
+                self.connector_socket = SocketConnector('192.168.4.1', 1360)
+                self.wrapper_socket = Wrapper(r'.*', broadcast_string, self.connector_socket.send)
+                bound = partial(mam_transfer, self.connector_socket.send)
+                self.connector_socket.start_listening(callback=self.wrapper_socket.consume_character)
+                self.wrapper = Wrapper(r'\d{8}', bound, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 
             if data['target'] == 'upra':
