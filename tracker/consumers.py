@@ -1,5 +1,6 @@
 import json
 import re
+import struct
 from functools import partial
 
 import channels.layers
@@ -25,6 +26,13 @@ def broadcast(message):
 
 def broadcast_string(message):
     broadcast({'message': message})
+
+
+def parse_mam(message):
+    if message[0:4] == 'ADCN':
+        print(struct.unpack('!ccccIfI', bytes(message, 'utf-8')))
+    if message[0:4] == 'VOLT':
+        print(struct.unpack('!ccccfII', bytes(message, 'utf-8')))
 
 
 def parse_upra(message):
@@ -57,14 +65,14 @@ def mam_transfer(callback, message):
 UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 
 MAM_MESSAGES = {
-    '11111110': 'ELORE',
-    '11111101': 'HATRA',
-    '11111011': 'JOBBRA',
-    '11110111': 'BALRA',
-    '11101111': 'KARLE',
-    '11011111': 'KARFEL',
-    '10111111': 'VILLOG',
-    '01111111': 'MEGALL',
+    '11111110': 'FOWD',
+    '11111101': 'BAWD',
+    '11111011': 'STOP',
+    '11110111': 'LEFT',
+    '11101111': 'RGHT',
+    '11011111': 'MODE',
+    '10111111': 'PNUP',
+    '01111111': 'PNDN',
 }
 
 
