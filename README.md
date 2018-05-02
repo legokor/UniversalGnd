@@ -1,14 +1,21 @@
 # Installation and usage
 
+- Install Docker (required for the Redis backend)
 - Install Python 3+
 - `pip install -r requirements.txt`
 - `python manage.py makemigrations tracker`
 - `python manage.py migrate`
 
-Run the interactive shell with `python manage.py shell` or the server with `python manage.py runserver`.
+# Running the app
+
+The WebSocket implementation requires a Redis instance, this is easiest to satisfy with the redis Docker image.
+
+- `docker run -d redis`
+
+The site can be launched with `python manage.py runserver`.
+Alternatively, if you want to tinker with the models, you can use `python manage.py shell`.
 
 # Resetting the database and migrations
 
-- `python manage.py migrate tracker zero`
-- Delete the `tracker/migrations` folder
+- Delete the `tracker/migrations` folder and `db.sqlite3`
 - Run migrations again (the two commands in the installation section)
