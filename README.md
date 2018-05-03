@@ -10,7 +10,7 @@
 
 The WebSocket implementation requires a Redis instance, this is easiest to satisfy with the redis Docker image.
 
-- `docker run -d redis`
+- `docker run -p 6379:6379 -d docker:latest`
 
 The site can be launched with `python manage.py runserver`.
 Alternatively, if you want to tinker with the models, you can use `python manage.py shell`.

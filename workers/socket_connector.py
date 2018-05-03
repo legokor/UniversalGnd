@@ -14,7 +14,9 @@ class SocketConnector(Connector):
 
     def listen(self):
         while self.listening:
-            self.callback(self.socket.recv(1))
+            bt = self.socket.recv(1)
+            print(bt)
+            self.callback(bt)
 
     def destruct(self):
         self.socket.close()

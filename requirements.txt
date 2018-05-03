@@ -1,3 +1,5 @@
 Django
 channels
 pySerial
+channels-redis
+asgiref
