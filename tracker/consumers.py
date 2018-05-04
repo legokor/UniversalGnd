@@ -82,7 +82,7 @@ def parse_mam(callback, message):
             callback('STOP')
         if data['button-2'] == 0:
             MAM_STATE = 'PIN'
-        callback('P' + str(data['pot']))
+        callback('P' + str(data['pot']).zfill(3))
     else:
         if data['switch-1'] == 0:
             callback('PNUP')
