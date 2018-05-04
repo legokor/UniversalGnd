@@ -52,28 +52,54 @@ def parse_upra(message):
     }})
 
 
-def mam_transfer(callback, message):
-    try:
-        message = MAM_MESSAGES[message]
-    except KeyError:
-        pass
+MAM_STATE = 'VEHICLE'
+
+
+def parse_mam(callback, message):
+    global MAM_STATE
+
+    match = re.match(MAM_STRING, message)
+    data = {
+        'switch-1': int(match.group(1)[0]),
+        'switch-2': int(match.group(1)[1]),
+        'switch-3': int(match.group(1)[2]),
+        'switch-4': int(match.group(1)[3]),
+        'button-1': int(match.group(2)[0]),
+        'button-2': int(match.group(2)[1]),
+        'pot': int(match.group(3)),
+    }
+    broadcast({'type': 'mam', 'data': data})
+    if MAM_STATE == 'VEHICLE':
+        if data['switch-1'] == 0:
+            callback('FOWD')
+        if data['switch-2'] == 0:
+            callback('BAWD')
+        if data['switch-3'] == 0:
+            callback('LEFT')
+        if data['switch-4'] == 0:
+            callback('RGHT')
+        if data['button-1'] == 0:
+            callback('STOP')
+        if data['button-2'] == 0:
+            MAM_STATE = 'PIN'
+        callback('P' + str(data['pot']))
     else:
-        broadcast({'sent': message})
-        callback(message)
+        if data['switch-1'] == 0:
+            callback('PNUP')
+        if data['switch-2'] == 0:
+            callback('PNDN')
+        if data['switch-3'] == 0:
+            callback('PNLT')
+        if data['switch-4'] == 0:
+            callback('PNGT')
+        if data['button-1'] == 0:
+            callback('STOP')
+        if data['button-2'] == 0:
+            MAM_STATE = 'VEHICLE'
 
 
 UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
-
-MAM_MESSAGES = {
-    '11111110': 'FOWD',
-    '11111101': 'BAWD',
-    '11111011': 'STOP',
-    '11110111': 'LEFT',
-    '11101111': 'RGHT',
-    '11011111': 'MODE',
-    '10111111': 'PNUP',
-    '01111111': 'PNDN',
-}
+MAM_STRING = r'(\d{4})(\d{2})(\d{3})'
 
 
 class Consumer(WebsocketConsumer):
@@ -110,9 +136,9 @@ class Consumer(WebsocketConsumer):
                 self.connector = SerialConnector(115200, 'COM4')
                 self.connector_socket = SocketConnector('192.168.4.1', 1360)
                 self.wrapper_socket = Wrapper(r'.*', broadcast_string, self.connector_socket.send)
-                bound = partial(mam_transfer, self.connector_socket.send)
+                bound = partial(parse_mam, self.connector_socket.send)
                 self.connector_socket.start_listening(callback=self.wrapper_socket.consume_character)
-                self.wrapper = Wrapper(r'\d{8}', bound, self.connector.send)
+                self.wrapper = Wrapper(MAM_STRING, bound, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 
             if data['target'] == 'upra':
