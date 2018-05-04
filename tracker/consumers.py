@@ -58,7 +58,7 @@ def mam_transfer(callback, message):
     except KeyError:
         pass
     else:
-        broadcast_string(message)
+        broadcast({'sent': message})
         callback(message)
 
 
