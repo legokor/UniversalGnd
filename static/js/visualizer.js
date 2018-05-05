@@ -69,10 +69,10 @@ document.addEventListener("keydown", function (event) {
     for (let key in controlFields) {
         let value = controlFields[key]["value"];
         if (event.keyCode === controlFields[key]["increaseKey"]) {
-            updateControlValue(key, value + 1);
+            // updateControlValue(key, value + 1);
         }
         if (event.keyCode === controlFields[key]["decreaseKey"]) {
-            updateControlValue(key, value - 1);
+            // updateControlValue(key, value - 1);
         }
     }
 });
@@ -89,7 +89,7 @@ window.onload = function () {
         text.value = input.value;
         input.addEventListener('input', function () {
             let value = this.value;
-            updateControlValue(field, value);
+            // updateControlValue(field, value);
         }, input);
     }
 };

@@ -9,5 +9,6 @@ for (var i = 1; i <= 8; ++i) {
 
 var initButtonMam = document.getElementById('init-mam');
 initButtonMam.addEventListener('click', function (event) {
-    socket.send(JSON.stringify({'action': 'init', 'target': 'mam'}));
+    var com = document.getElementById('mam-com');
+    socket.send(JSON.stringify({'action': 'init', 'target': 'mam', 'com': com.value}));
 });

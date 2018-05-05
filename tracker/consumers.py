@@ -133,9 +133,11 @@ class Consumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+        print(data)
+
         if data['action'] == 'init':
             if data['target'] == 'mam':
-                self.connector = SerialConnector(115200, 'COM4')
+                self.connector = SerialConnector(115200, data['com'])
                 self.connector_socket = SocketConnector('192.168.4.1', 1360)
                 self.wrapper_socket = Wrapper(r'.*', broadcast_string, self.connector_socket.send)
                 bound = partial(parse_mam, self.connector_socket.send)
