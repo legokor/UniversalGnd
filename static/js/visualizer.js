@@ -51,7 +51,7 @@ function sendMessage() {
 
     let text = input.value;
     input.value = '';
-    socket.send(JSON.stringify({'text': text}));
+    socket.send(JSON.stringify({'action': 'send', 'data': text}));
 }
 
 function updateControlValue(name, value) {

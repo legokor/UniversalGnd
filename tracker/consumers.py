@@ -175,8 +175,7 @@ class Consumer(WebsocketConsumer):
                 self.wrapper.send(message)
 
         if data['action'] == 'send':
-            if self.wrapper:
-                self.wrapper.send(data['data'])
+            self.connector_socket.send(data['data'])
 
         if data['action'] == 'fetch':
             try:
