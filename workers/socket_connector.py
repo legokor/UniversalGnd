@@ -8,8 +8,10 @@ class SocketConnector(Connector):
         super().__init__()
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect((ip, port))
+        print('Connected to socket ' + ip + ':' + str(port))
 
     def send(self, message):
+        print('sent (socket): ', message)
         self.socket.send(bytes(message, 'UTF-8'))
 
     def listen(self):

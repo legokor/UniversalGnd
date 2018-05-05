@@ -70,6 +70,7 @@ def parse_mam(callback, message):
     }
     broadcast({'type': 'mam', 'data': data})
     if MAM_STATE == 'VEHICLE':
+        print('vehicle state')
         if data['switch-1'] == 0:
             callback('FOWD')
         if data['switch-2'] == 0:
@@ -82,8 +83,9 @@ def parse_mam(callback, message):
             callback('STOP')
         if data['button-2'] == 0:
             MAM_STATE = 'PIN'
-        callback('P' + str(data['pot']).zfill(3))
+        # callback('P' + str(data['pot']).zfill(3))
     else:
+        print('pin state')
         if data['switch-1'] == 0:
             callback('PNUP')
         if data['switch-2'] == 0:
