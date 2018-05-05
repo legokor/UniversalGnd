@@ -17,10 +17,10 @@ function mamParse(data) {
     }
 
     var pot = document.getElementById('pot');
-    pot.value = 'POT: ' + data['pot'];
+    pot.innerText = 'POT: ' + data['pot'];
 
     var mode = document.getElementById('mode');
-    mode.value = 'MODE: ' + data['mode'];
+    mode.innerText = 'MODE: ' + data['mode'];
 
     var fwd = document.getElementById('moving-forward');
     if (data['moving-forward']) {
