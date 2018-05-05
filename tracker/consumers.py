@@ -53,10 +53,12 @@ def parse_upra(message):
 
 
 MAM_STATE = 'VEHICLE'
+MAM_MOVING_FORWARD = False
+MAM_MOVING_BACKWARD = False
 
 
 def parse_mam(callback, message):
-    global MAM_STATE
+    global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD
 
     match = re.match(MAM_STRING, message)
     data = {
@@ -73,17 +75,27 @@ def parse_mam(callback, message):
         print('vehicle state')
         if data['switch-1'] == 0:
             callback('FOWD')
+            MAM_MOVING_FORWARD = True
+        elif MAM_MOVING_FORWARD:
+            MAM_MOVING_FORWARD = False
+            callback('STOP')
         if data['switch-2'] == 0:
             callback('BAWD')
+            MAM_MOVING_BACKWARD = True
+        elif MAM_MOVING_BACKWARD:
+            MAM_MOVING_BACKWARD = False
+            callback('STOP')
         if data['switch-3'] == 0:
             callback('LEFT')
         if data['switch-4'] == 0:
             callback('RGHT')
         if data['button-1'] == 0:
             callback('STOP')
+            MAM_MOVING_FORWARD = False
+            MAM_MOVING_BACKWARD = False
         if data['button-2'] == 0:
             MAM_STATE = 'PIN'
-        # callback('P' + str(data['pot']).zfill(3))
+        callback('P' + str(data['pot']).zfill(3))
     else:
         print('pin state')
         if data['switch-1'] == 0:
