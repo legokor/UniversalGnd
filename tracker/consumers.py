@@ -114,6 +114,13 @@ def parse_mam(callback, message):
         if data['button-2'] == 0:
             MAM_STATE = 'VEHICLE'
 
+    data.update({
+        'mode': MAM_STATE,
+        'moving-forward': MAM_MOVING_FORWARD,
+        'moving-backward': MAM_MOVING_BACKWARD
+    })
+    broadcast({'type': 'mam', 'data': data})
+
 
 UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 MAM_STRING = r'(\d{4})(\d{2})(\d{3})'
