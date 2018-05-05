@@ -69,6 +69,9 @@ def parse_mam(callback, message):
         'button-1': int(match.group(2)[0]),
         'button-2': int(match.group(2)[1]),
         'pot': int(match.group(3)),
+        'mode': MAM_STATE,
+        'moving-forward': MAM_MOVING_FORWARD,
+        'moving-backward': MAM_MOVING_BACKWARD,
     }
     broadcast({'type': 'mam', 'data': data})
     if MAM_STATE == 'VEHICLE':

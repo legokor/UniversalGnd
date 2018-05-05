@@ -27,6 +27,8 @@ function messageParse(event) {
     let data = JSON.parse(event.data);
     if (data.type === 'upra') {
         upraParse(data.data);
+    } else if (data.type === 'mam') {
+        mamParse(data.data);
     } else {
         if ('tasks' in data) {
             printChecklist(data.tasks);

@@ -51,3 +51,7 @@ input[type=checkbox] {
     display: inline-block;
     width: 30%;
 }
+
+button.active {
+    background-color: lime;
+}

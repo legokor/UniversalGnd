@@ -1,10 +1,40 @@
-for (var i = 1; i <= 8; ++i) {
-    var button = document.getElementById('button-' + i);
-    (function (id) {
-        button.addEventListener('click', function (event) {
-            socket.send(JSON.stringify({'action': 'button-click', 'id': id}));
-        });
-    })(i);
+function mamParse(data) {
+    for (var i = 1; i <= 4; ++i) {
+        var btn = document.getElementById('switch-' + i);
+        if (data['switch-' + i] === 0) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    }
+    for (var i = 1; i <= 2; ++i) {
+        var btn = document.getElementById('button-' + i);
+        if (data['button-' + i] === 0) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    }
+
+    var pot = document.getElementById('pot');
+    pot.value = 'POT: ' + data['pot'];
+
+    var mode = document.getElementById('mode');
+    mode.value = 'MODE: ' + data['mode'];
+
+    var fwd = document.getElementById('moving-forward');
+    if (data['moving-forward']) {
+        fwd.classList.add('active');
+    } else {
+        fwd.classList.remove('active');
+    }
+
+    var bwd = document.getElementById('moving-backward');
+    if (data['moving-backward']) {
+        bwd.classList.add('active');
+    } else {
+        bwd.classList.remove('active');
+    }
 }
 
 var initButtonMam = document.getElementById('init-mam');
