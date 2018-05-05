@@ -77,17 +77,9 @@ def parse_mam(callback, message):
     }
     broadcast({'type': 'mam', 'data': data})
     if data['switch-1'] == 0:
-        callback('FOWD')
-        MAM_MOVING_FORWARD = True
-    elif MAM_MOVING_FORWARD:
-        MAM_MOVING_FORWARD = False
-        callback('STOP')
+        pass
     if data['switch-2'] == 0:
-        callback('BAWD')
-        MAM_MOVING_BACKWARD = True
-    elif MAM_MOVING_BACKWARD:
-        MAM_MOVING_BACKWARD = False
-        callback('STOP')
+        pass
     if data['switch-3'] == 0:
         callback('PNDN')
         MAM_PIN_DOWN = True
@@ -99,9 +91,17 @@ def parse_mam(callback, message):
     elif MAM_STATE == 'PIN':
         MAM_STATE = 'VEHICLE'
     if data['button-1'] == 0:
-        callback('STOP')
+        callback('FOWD')
+        MAM_MOVING_FORWARD = True
+    elif MAM_MOVING_FORWARD:
         MAM_MOVING_FORWARD = False
+        callback('STOP')
+    if data['button-2'] == 0:
+        callback('BAWD')
+        MAM_MOVING_BACKWARD = True
+    elif MAM_MOVING_BACKWARD:
         MAM_MOVING_BACKWARD = False
+        callback('STOP')
     if data['pot'] != MAM_POT_STATE:
         if data['pot'] < MAM_POT_STATE:
             if MAM_STATE == 'VEHICLE':
