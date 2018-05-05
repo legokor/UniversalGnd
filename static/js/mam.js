@@ -19,9 +19,6 @@ function mamParse(data) {
     var pot = document.getElementById('pot');
     pot.innerText = 'POT: ' + data['pot'];
 
-    var mode = document.getElementById('mode');
-    mode.innerText = 'MODE: ' + data['mode'];
-
     var fwd = document.getElementById('moving-forward');
     if (data['moving-forward']) {
         fwd.classList.add('active');
