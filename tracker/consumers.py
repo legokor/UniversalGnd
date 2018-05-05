@@ -95,17 +95,24 @@ def parse_mam(callback, message):
         callback('PNUP')
         MAM_PIN_DOWN = False
     if data['switch-4'] == 0:
-        # callback('RGHT')
-        pass
+        MAM_STATE = 'PIN'
+    elif MAM_STATE == 'PIN':
+        MAM_STATE = 'VEHICLE'
     if data['button-1'] == 0:
         callback('STOP')
         MAM_MOVING_FORWARD = False
         MAM_MOVING_BACKWARD = False
     if data['pot'] != MAM_POT_STATE:
         if data['pot'] < MAM_POT_STATE:
-            callback('LEFT')
+            if MAM_STATE == 'VEHICLE':
+                callback('LEFT')
+            else:
+                callback('PNLT')
         else:
-            callback('RGHT')
+            if MAM_STATE == 'VEHICLE':
+                callback('RGHT')
+            else:
+                callback('PNRT')
         MAM_POT_STATE = data['pot']
 
     data.update({
