@@ -105,10 +105,10 @@ def parse_mam(callback, message):
     if data['pot'] != MAM_POT_STATE:
         if data['pot'] < MAM_POT_STATE:
             if MAM_STATE == 'VEHICLE':
-                callback('X' + str(data['pot']))
+                callback('X' + str(data['pot']).zfill(3))
         else:
             if MAM_STATE == 'VEHICLE':
-                callback('Q' + str(data['pot']))
+                callback('Q' + str(data['pot']).zfill(3))
         MAM_POT_STATE = data['pot']
 
     data.update({
