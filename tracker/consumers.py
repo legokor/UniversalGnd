@@ -105,12 +105,10 @@ def parse_mam(callback, message):
         MAM_MOVING_BACKWARD = False
         callback('STOP')
     if data['pot'] != MAM_POT_STATE:
-        if data['pot'] < MAM_POT_STATE:
-            if MAM_STATE == 'VEHICLE':
-                callback('X' + str(data['pot']).zfill(3))
+        if MAM_STATE == 'VEHICLE':
+            callback('X' + str(data['pot']).zfill(3))
         else:
-            if MAM_STATE == 'VEHICLE':
-                callback('Q' + str(data['pot']).zfill(3))
+            callback('Q' + str(data['pot']).zfill(3))
         MAM_POT_STATE = data['pot']
 
     data.update({
