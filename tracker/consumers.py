@@ -76,55 +76,37 @@ def parse_mam(callback, message):
         'moving-backward': MAM_MOVING_BACKWARD,
     }
     broadcast({'type': 'mam', 'data': data})
-    if MAM_STATE == 'VEHICLE':
-        print('vehicle state')
-        if data['switch-1'] == 0:
-            callback('FOWD')
-            MAM_MOVING_FORWARD = True
-        elif MAM_MOVING_FORWARD:
-            MAM_MOVING_FORWARD = False
-            callback('STOP')
-        if data['switch-2'] == 0:
-            callback('BAWD')
-            MAM_MOVING_BACKWARD = True
-        elif MAM_MOVING_BACKWARD:
-            MAM_MOVING_BACKWARD = False
-            callback('STOP')
-        if data['switch-3'] == 0:
-            callback('PNDN')
-            MAM_PIN_DOWN = True
-        elif MAM_PIN_DOWN:
-            callback('PNUP')
-            MAM_PIN_DOWN = False
-        if data['switch-4'] == 0:
-            # callback('RGHT')
-            pass
-        if data['button-1'] == 0:
-            callback('STOP')
-            MAM_MOVING_FORWARD = False
-            MAM_MOVING_BACKWARD = False
-        if data['button-2'] == 0:
-            MAM_STATE = 'PIN'
-        if data['pot'] != MAM_POT_STATE:
-            if data['pot'] < MAM_POT_STATE:
-                callback('LEFT')
-            else:
-                callback('RGHT')
-            MAM_POT_STATE = data['pot']
-    else:
-        print('pin state')
-        if data['switch-1'] == 0:
-            callback('PNUP')
-        if data['switch-2'] == 0:
-            callback('PNDN')
-        if data['switch-3'] == 0:
-            callback('PNLT')
-        if data['switch-4'] == 0:
-            callback('PNGT')
-        if data['button-1'] == 0:
-            callback('STOP')
-        if data['button-2'] == 0:
-            MAM_STATE = 'VEHICLE'
+    if data['switch-1'] == 0:
+        callback('FOWD')
+        MAM_MOVING_FORWARD = True
+    elif MAM_MOVING_FORWARD:
+        MAM_MOVING_FORWARD = False
+        callback('STOP')
+    if data['switch-2'] == 0:
+        callback('BAWD')
+        MAM_MOVING_BACKWARD = True
+    elif MAM_MOVING_BACKWARD:
+        MAM_MOVING_BACKWARD = False
+        callback('STOP')
+    if data['switch-3'] == 0:
+        callback('PNDN')
+        MAM_PIN_DOWN = True
+    elif MAM_PIN_DOWN:
+        callback('PNUP')
+        MAM_PIN_DOWN = False
+    if data['switch-4'] == 0:
+        # callback('RGHT')
+        pass
+    if data['button-1'] == 0:
+        callback('STOP')
+        MAM_MOVING_FORWARD = False
+        MAM_MOVING_BACKWARD = False
+    if data['pot'] != MAM_POT_STATE:
+        if data['pot'] < MAM_POT_STATE:
+            callback('LEFT')
+        else:
+            callback('RGHT')
+        MAM_POT_STATE = data['pot']
 
     data.update({
         'mode': MAM_STATE,
