@@ -60,7 +60,7 @@ MAM_POT_STATE = 50
 
 
 def parse_mam(callback, message):
-    global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD, MAM_POT_STATE
+    global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD, MAM_POT_STATE, MAM_PIN_DOWN
 
     match = re.match(MAM_STRING, message)
     data = {
@@ -91,9 +91,14 @@ def parse_mam(callback, message):
             MAM_MOVING_BACKWARD = False
             callback('STOP')
         if data['switch-3'] == 0:
-            callback('LEFT')
+            callback('PNDN')
+            MAM_PIN_DOWN = True
+        elif MAM_PIN_DOWN:
+            callback('PNUP')
+            MAM_PIN_DOWN = False
         if data['switch-4'] == 0:
-            callback('RGHT')
+            # callback('RGHT')
+            pass
         if data['button-1'] == 0:
             callback('STOP')
             MAM_MOVING_FORWARD = False
