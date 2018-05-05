@@ -25,9 +25,11 @@ def broadcast(message):
 
 
 def broadcast_string(message):
-    global MAM_RECEIVED, MAM_SENT
-    MAM_RECEIVED = True
-    MAM_SENT = False
+    global MAM_RECEIVED, MAM_SENT, MAM_RECEIVED_ACK
+    MAM_RECEIVED_ACK += 1
+    if MAM_RECEIVED_ACK % 4 == 0:
+        MAM_RECEIVED = True
+        MAM_RECEIVED_ACK = 0
     broadcast({'message': message})
 
 
@@ -62,6 +64,7 @@ MAM_PIN_DOWN = False
 MAM_POT_STATE = 50
 MAM_SENT = False
 MAM_RECEIVED = False
+MAM_RECEIVED_ACK = 0
 
 
 def parse_mam(callback, message):
