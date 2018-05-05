@@ -105,14 +105,10 @@ def parse_mam(callback, message):
     if data['pot'] != MAM_POT_STATE:
         if data['pot'] < MAM_POT_STATE:
             if MAM_STATE == 'VEHICLE':
-                callback('LEFT')
-            else:
-                callback('PNLT')
+                callback('X' + str(data['pot']))
         else:
             if MAM_STATE == 'VEHICLE':
-                callback('RGHT')
-            else:
-                callback('PNRT')
+                callback('Q' + str(data['pot']))
         MAM_POT_STATE = data['pot']
 
     data.update({
