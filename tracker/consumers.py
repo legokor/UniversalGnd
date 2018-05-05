@@ -68,6 +68,7 @@ def parse_mam(callback, message):
     global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD, MAM_POT_STATE, MAM_PIN_DOWN, MAM_SENT, MAM_RECEIVED
 
     if MAM_SENT and not MAM_RECEIVED:
+        print('Waiting for network, not sending...')
         return
 
     match = re.match(MAM_STRING, message)
