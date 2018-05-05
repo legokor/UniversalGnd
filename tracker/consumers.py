@@ -25,9 +25,6 @@ def broadcast(message):
 
 
 def broadcast_string(message):
-    global MAM_RECEIVED, MAM_SENT
-    MAM_RECEIVED = True
-    MAM_SENT = False
     broadcast({'message': message})
 
 
@@ -60,15 +57,10 @@ MAM_MOVING_FORWARD = False
 MAM_MOVING_BACKWARD = False
 MAM_PIN_DOWN = False
 MAM_POT_STATE = 50
-MAM_SENT = False
-MAM_RECEIVED = False
 
 
 def parse_mam(callback, message):
-    global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD, MAM_POT_STATE, MAM_PIN_DOWN, MAM_SENT, MAM_RECEIVED
-
-    if MAM_SENT and not MAM_RECEIVED:
-        return
+    global MAM_STATE, MAM_MOVING_BACKWARD, MAM_MOVING_FORWARD, MAM_POT_STATE, MAM_PIN_DOWN
 
     match = re.match(MAM_STRING, message)
     data = {
@@ -124,8 +116,6 @@ def parse_mam(callback, message):
         'moving-forward': MAM_MOVING_FORWARD,
         'moving-backward': MAM_MOVING_BACKWARD
     })
-    MAM_SENT = True
-    MAM_RECEIVED = False
     broadcast({'type': 'mam', 'data': data})
 
 
@@ -178,6 +168,11 @@ class Consumer(WebsocketConsumer):
                 self.connector = SocketConnector('127.0.0.1', 1337)
                 self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
+
+        if data['action'] == 'button-click':
+            if self.wrapper:
+                message = MAM_MESSAGES.get(str(data['id']), '')
+                self.wrapper.send(message)
 
         if data['action'] == 'send':
             self.connector_socket.send(data['data'])
