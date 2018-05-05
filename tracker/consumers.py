@@ -79,7 +79,9 @@ def parse_mam(callback, message):
     if data['switch-1'] == 0:
         pass
     if data['switch-2'] == 0:
-        pass
+        callback('STOP')
+        MAM_MOVING_BACKWARD = False
+        MAM_MOVING_FORWARD = False
     if data['switch-3'] == 0:
         callback('PNDN')
         MAM_PIN_DOWN = True
