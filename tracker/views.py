@@ -1,7 +1,10 @@
+import json
+
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import Task
 from .consumers import broadcast
@@ -21,12 +24,16 @@ def checklist(request):
     return JsonResponse(data, safe=False)
 
 
-def toggle(request, id):
-    task = Task.objects.get(pk=id)
-    if task.actual_timestamp is not None:
-        task.actual_timestamp = None
-    else:
+@csrf_exempt
+def update_task(request, pk):
+    task = Task.objects.get(pk=pk)
+    data = json.loads(request.body)
+    if data['finished'] and task.actual_timestamp is None:
         task.actual_timestamp = timezone.now()
+    elif not data['finished'] and task.actual_timestamp is not None:
+        task.actual_timestamp = None
+    if task.has_value:
+        task.value = data.get('value')
     task.save()
     broadcast(task.serialized_fields())
-    return HttpResponse(request, "")
+    return HttpResponse(request)

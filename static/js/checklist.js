@@ -16,6 +16,9 @@ function printChecklist(checklist) {
             element.classList.add('completed');
         }
         let text = item.title + " (" + timeString + " UTC)";
+        if (item.has_value && item.value) {
+            text += ', Value: ' + item.value;
+        }
         element.appendChild(document.createTextNode(text));
         listDiv.appendChild(element);
     });
