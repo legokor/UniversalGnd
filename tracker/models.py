@@ -9,12 +9,27 @@ class Launch(models.Model):
         verbose_name_plural = "launches"
 
     def __str__(self):
-        return self.name
+        return str(self.name)
+
+    def get_organized_tasks(self):
+        return [
+            dict(
+               tasks=[task.serialized_fields() for task in group.task_set.order_by('projected_timestamp').all()],
+               name=group.name
+            ) for group in self.taskgroup_set.all()
+        ] + [{
+            'orphaned': True,
+            'tasks': [task.serialized_fields() for task in
+                      Task.objects.filter(launch=self, group=None).order_by('projected_timestamp')],
+        }]
 
 
 class TaskGroup(models.Model):
     launch = models.ForeignKey(Launch, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return "{0} ({1})".format(self.name, self.launch)
 
 
 class Task(models.Model):

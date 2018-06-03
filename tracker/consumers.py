@@ -188,4 +188,4 @@ class Consumer(WebsocketConsumer):
             except Launch.DoesNotExist:
                 self.send(text_data=json.dumps({'message': 'Does not exist'}))
             else:
-                self.send(text_data=json.dumps({'tasks': [task.serialized_fields() for task in launch.task_set.all()]}))
+                self.send(text_data=json.dumps({'type': 'checklist', 'tasks': launch.get_organized_tasks()}))
