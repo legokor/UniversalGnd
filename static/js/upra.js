@@ -3,7 +3,21 @@ initButtonUpra.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'init', 'target': 'upra'}));
 });
 
+var programNameSubmit = document.getElementById('program-name-submit');
+programNameSubmit.addEventListener('click', function (event) {
+    socket.send(JSON.stringify({'action': 'program-name', 'data': document.getElementById('program-name').value}));
+});
+
+var programCommandSend = document.getElementById('program-command-send');
+programCommandSend.addEventListener('click', function (event) {
+    socket.send(JSON.stringify({'action': 'program-command', 'data': document.getElementById('program-command').value}));
+});
+
 function upraParse(data) {
+    if ('command-output' in data) {
+        console.log(data);
+        return;
+    }
     console.log(data.latitude);
     console.log(data.longitude);
     var latitude = data.latitude;

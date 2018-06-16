@@ -9,6 +9,7 @@ from channels.generic.websocket import WebsocketConsumer
 
 from workers.serial_connector import SerialConnector
 from workers.socket_connector import SocketConnector
+from workers.console_connector import ConsoleConnector
 from workers.wrapper import Wrapper
 from .models import Launch
 
@@ -140,6 +141,7 @@ class Consumer(WebsocketConsumer):
         self.connector = None
         self.connector_socket = None
         self.wrapper_socket = None
+        self.process = None
 
     def connect(self):
         async_to_sync(self.channel_layer.group_add)(
@@ -189,3 +191,11 @@ class Consumer(WebsocketConsumer):
                 self.send(text_data=json.dumps({'message': 'Does not exist'}))
             else:
                 self.send(text_data=json.dumps({'type': 'checklist', 'tasks': launch.get_organized_tasks()}))
+
+        if data['action'] == 'program-name':
+            self.process = ConsoleConnector(data['data'])
+            self.process.start_listening(callback=broadcast_string)
+
+        if data['action'] == 'program-command':
+            if self.process is not None:
+                self.process.send(data['data'])
