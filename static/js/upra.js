@@ -13,6 +13,8 @@ programCommandSend.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'program-command', 'data': document.getElementById('program-command').value}));
 });
 
+
+
 function upraParse(data) {
     if ('command-output' in data) {
         console.log(data);

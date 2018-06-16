@@ -31,7 +31,7 @@ function updateTask(data) {
 function initWebsocket(url) {
     socket = new WebSocket("ws://" + url);
     socket.onopen = function (event) {
-        loadChecklist(2);
+        getLaunches();
     };
     socket.onmessage = messageParse;
     socket.onerror = function() {
@@ -40,6 +40,10 @@ function initWebsocket(url) {
     socket.onclose = function () {
         alert('Connection to the server was lost, refresh to reconnect!');
     };
+}
+
+function getLaunches() {
+    socket.send(JSON.stringify({'action': 'get-launches'}));
 }
 
 function loadChecklist(checklistId) {

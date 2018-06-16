@@ -45,6 +45,29 @@ function printChecklist(checklist) {
     });
 }
 
+function printLaunchList(launches) {
+    console.log(launches);
+    var taskSelector = document.getElementById('task-selector');
+    if (launches.length === 0) {
+        console.log("There are no available launches.");
+        var noOption = document.createElement('option');
+        noOption.appendChild(document.createTextNode('No launches available.'));
+        noOption.disabled = true;
+        noOption.selected = true;
+        taskSelector.appendChild(noOption);
+    } else {
+        launches.forEach(function (launch) {
+            var option = document.createElement('option');
+            option.value = launch.id;
+            option.appendChild(document.createTextNode(launch.name));
+            if (launches.index(launch) === launches.length - 1) {
+                option.selected = true;
+            }
+            taskSelector.appendChild(option);
+        });
+    }
+}
+
 function messageParse(event) {
     console.log(event.data);
     displayMessage(event.data);
@@ -62,6 +85,8 @@ function messageParse(event) {
             parseCoordinatesMessage(data);
         } else if ('timestamp' in data) {
             parseGenericMessage(data);
+        } else if ('launches' in data) {
+            printLaunchList(data.launches);
         }
     }
 }

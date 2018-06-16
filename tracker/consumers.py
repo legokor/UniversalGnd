@@ -6,9 +6,9 @@ import channels.layers
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 
+from workers.console_connector import ConsoleConnector
 from workers.serial_connector import SerialConnector
 from workers.socket_connector import SocketConnector
-from workers.console_connector import ConsoleConnector
 from workers.wrapper import Wrapper
 from .models import Launch
 
@@ -176,7 +176,11 @@ class Consumer(WebsocketConsumer):
         if data['action'] == 'send':
             self.connector_socket.send(data['data'])
 
-        if data['action'] == 'fetch':
+        if data['action'] == 'get-launches':
+            self.send(text_data=json.dumps(
+                {'launches': [{'id': launch.id, 'name': launch.name} for launch in Launch.objects.all()]}))
+
+        if data['action'] == 'fetch-launch':
             try:
                 launch = Launch.objects.get(pk=data['id'])
             except Launch.DoesNotExist:
