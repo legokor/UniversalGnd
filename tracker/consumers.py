@@ -1,6 +1,5 @@
 import json
 import re
-import struct
 from functools import partial
 
 import channels.layers
@@ -30,13 +29,6 @@ def broadcast_string(message):
     MAM_RECEIVED = True
     MAM_SENT = False
     broadcast({'message': message})
-
-
-def parse_mam(message):
-    if message[0:4] == 'ADCN':
-        print(struct.unpack('!ccccIfI', bytes(message, 'utf-8')))
-    if message[0:4] == 'VOLT':
-        print(struct.unpack('!ccccfII', bytes(message, 'utf-8')))
 
 
 def parse_upra(message):
