@@ -32,7 +32,8 @@ def broadcast_string(message):
 
 
 def parse_upra(message):
-    match = re.match(UPRA_STRING, message)
+    print('parse upra: ' + str(message))
+    match = re.search(UPRA_STRING, message)
     broadcast({'type': 'upra', 'data': {
         'callsign': match.group(1),
         'messageid': match.group(2),
@@ -63,7 +64,7 @@ def parse_mam(callback, message):
     if MAM_SENT and not MAM_RECEIVED:
         print('Missing an ACK...')
 
-    match = re.match(MAM_STRING, message)
+    match = re.search(MAM_STRING, message)
     data = {
         'switch-1': int(match.group(1)[0]),
         'switch-2': int(match.group(1)[1]),
@@ -122,7 +123,7 @@ def parse_mam(callback, message):
     broadcast({'type': 'mam', 'data': data})
 
 
-UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-].{4}\..{3}),([+-].{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
+UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-]?.{4}\..{3}),([+-]?.{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 MAM_STRING = r'(\d{4})(\d{2})(\d{3})'
 
 
@@ -169,7 +170,7 @@ class Consumer(WebsocketConsumer):
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 
             if data['target'] == 'upra':
-                self.connector = SocketConnector('127.0.0.1', 1337)
+                self.connector = SerialConnector(57600, data['com'])
                 self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
                 self.connector.start_listening(callback=self.wrapper.consume_character)
 

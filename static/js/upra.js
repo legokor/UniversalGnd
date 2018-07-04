@@ -1,6 +1,7 @@
 var initButtonUpra = document.getElementById('init-upra');
 initButtonUpra.addEventListener('click', function (event) {
-    socket.send(JSON.stringify({'action': 'init', 'target': 'upra'}));
+    var com = document.getElementById('com');
+    socket.send(JSON.stringify({'action': 'init', 'target': 'upra', 'com': com.value}));
 });
 
 var programNameSubmit = document.getElementById('program-name-submit');

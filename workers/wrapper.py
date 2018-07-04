@@ -9,10 +9,16 @@ class Wrapper:
         self.buffer = ""
 
     def consume_character(self, char):
-        self.buffer += char.decode('utf-8')
-        if re.match(self.pattern, self.buffer):
+        try:
+            self.buffer += char.decode('utf-8')
+        except UnicodeDecodeError:
+            pass
+        if re.search(self.pattern, self.buffer):
+            print('match')
             self.digest_message(self.buffer)
             self.buffer = ""
+        else:
+            print('no match: ', self.buffer)
 
     def digest_message(self, message):
         self.consumer(message)

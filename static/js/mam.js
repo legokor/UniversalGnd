@@ -61,11 +61,11 @@ function getCookie(name) {
 var initButtonMam = document.getElementById('init-mam');
 var comCookie = getCookie('com');
 if (comCookie !== null) {
-    var comInput = document.getElementById('mam-com');
+    var comInput = document.getElementById('com');
     comInput.value = comCookie;
 }
 initButtonMam.addEventListener('click', function (event) {
-    var com = document.getElementById('mam-com');
+    var com = document.getElementById('com');
     setCookie('com', com.value, 30);
     socket.send(JSON.stringify({'action': 'init', 'target': 'mam', 'com': com.value}));
 });
