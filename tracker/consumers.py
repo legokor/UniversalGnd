@@ -32,7 +32,6 @@ def broadcast_string(message):
 
 
 def parse_upra(message):
-    print('parse upra: ' + str(message))
     match = re.search(UPRA_STRING, message)
     broadcast({'type': 'upra', 'data': {
         'callsign': match.group(1),
@@ -157,7 +156,6 @@ class Consumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
 
         if data['action'] == 'init':
             if data['target'] == 'mam':

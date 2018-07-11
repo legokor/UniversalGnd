@@ -13,7 +13,6 @@ class SerialConnector(Connector):
         print('Connected to serial port {}'.format(port))
 
     def send(self, message):
-        print('sent (serial): ', message)
         self.connection.write(message.encode('ascii'))
 
     def listen(self):

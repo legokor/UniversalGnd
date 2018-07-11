@@ -11,13 +11,11 @@ class SocketConnector(Connector):
         print('Connected to socket ' + ip + ':' + str(port))
 
     def send(self, message):
-        print('sent (socket): ', message)
         self.socket.send(bytes(message, 'UTF-8'))
 
     def listen(self):
         while self.listening:
             bt = self.socket.recv(1)
-            print(bt)
             self.callback(bt)
 
     def destruct(self):
