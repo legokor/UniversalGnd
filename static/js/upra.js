@@ -14,7 +14,11 @@ programCommandSend.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'program-command', 'data': document.getElementById('program-command').value}));
 });
 
-
+var taskSelectSend = document.getElementById('task-selector-submit');
+taskSelectSend.addEventListener('click', function (event) {
+    var select = document.getElementById('task-selector');
+    socket.send(JSON.stringify({'action': 'fetch-launch', 'id': select.options[select.selectedIndex].value}));
+});
 
 function upraParse(data) {
     if ('command-output' in data) {

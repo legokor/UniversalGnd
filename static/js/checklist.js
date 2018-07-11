@@ -60,7 +60,7 @@ function printLaunchList(launches) {
             var option = document.createElement('option');
             option.value = launch.id;
             option.appendChild(document.createTextNode(launch.name));
-            if (launches.index(launch) === launches.length - 1) {
+            if (launches.indexOf(launch) === launches.length - 1) {
                 option.selected = true;
             }
             taskSelector.appendChild(option);
