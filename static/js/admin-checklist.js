@@ -41,6 +41,28 @@ function printItem(item, group = null) {
     return element;
 }
 
+function printLaunchList(launches) {
+    var taskSelector = document.getElementById('task-selector');
+    if (launches.length === 0) {
+        console.log("There are no available launches.");
+        var noOption = document.createElement('option');
+        noOption.appendChild(document.createTextNode('No launches available.'));
+        noOption.disabled = true;
+        noOption.selected = true;
+        taskSelector.appendChild(noOption);
+    } else {
+        launches.forEach(function (launch) {
+            var option = document.createElement('option');
+            option.value = launch.id;
+            option.appendChild(document.createTextNode(launch.name));
+            if (launches.indexOf(launch) === launches.length - 1) {
+                option.selected = true;
+            }
+            taskSelector.appendChild(option);
+        });
+    }
+}
+
 function printChecklist(checklist) {
     let listDiv = document.getElementById("task-matrix");
     while (listDiv.lastChild) {
@@ -50,13 +72,11 @@ function printChecklist(checklist) {
     checklist.forEach(function (item) {
         if ('orphaned' in item) {
             // tasks without a group
-            console.log('orphaned tasks');
             item.tasks.forEach(function (task) {
                 listDiv.appendChild(printItem(task));
             });
         } else {
             let group = item.name;
-            console.log('Group: ' + group);
             item.tasks.forEach(function (task) {
                 listDiv.appendChild(printItem(task, group));
             });
@@ -66,7 +86,15 @@ function printChecklist(checklist) {
 
 function messageParse(event) {
     let data = JSON.parse(event.data);
-    if ('tasks' in data) {
+    if (data.type === 'checklist') {
         printChecklist(data.tasks);
+    } else if ('launches' in data) {
+        printLaunchList(data.launches);
     }
 }
+
+var taskSelectSend = document.getElementById('task-selector-submit');
+taskSelectSend.addEventListener('click', function (event) {
+    var select = document.getElementById('task-selector');
+    socket.send(JSON.stringify({'action': 'fetch-launch', 'id': select.options[select.selectedIndex].value}));
+});

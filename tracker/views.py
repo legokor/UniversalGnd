@@ -35,5 +35,5 @@ def update_task(request, pk):
     if task.has_value:
         task.value = data.get('value')
     task.save()
-    broadcast(task.serialized_fields())
+    broadcast({'type': 'update', 'data': task.serialized_fields()})
     return HttpResponse(request)

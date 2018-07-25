@@ -78,10 +78,10 @@ function messageParse(event) {
         mamParse(data.data);
     } else if (data.type === 'checklist') {
         printChecklist(data.tasks);
+    } else if (data.type === 'update') {
+        updateTask(data.data);
     } else {
-        if ('taskData' in data) {
-            updateTask(data.taskData);
-        } else if ('lat' in data) {
+        if ('lat' in data) {
             parseCoordinatesMessage(data);
         } else if ('timestamp' in data) {
             parseGenericMessage(data);

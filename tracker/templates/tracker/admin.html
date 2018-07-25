@@ -3,6 +3,10 @@
 {% load static %}
 
 {% block content %}
+    <div>
+        <select id='task-selector'></select>
+        <button id='task-selector-submit'>Fetch</button>
+    </div>
     <ul id="task-matrix">
     </ul>
     <script src="{% static 'js/admin-checklist.js' %}"></script>
