@@ -4,6 +4,30 @@ from django.utils.dateformat import format
 
 class Launch(models.Model):
     name = models.CharField(max_length=100)
+    balloon_dry_mass = models.DecimalField(
+        "Mass of empty balloon (g)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    parachute_dry_mass = models.DecimalField(
+        "Mass of parachute (g)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    payload_dry_mass = models.DecimalField(
+        "Mass off payload (g)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    nozzle_lift = models.DecimalField(
+        "Nozzle lift (g)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    parachute_area = models.DecimalField(
+        "Area of parachute (m^2)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    parachute_drag_c = models.DecimalField(
+        "Drag coefficient of parachute",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    balloon_drag_c = models.DecimalField(
+        "Drag coefficient of balloon",
+        max_digits=16, decimal_places=4, null=True, blank=True)
+    design_burst_diam = models.DecimalField(
+        "Design burst diameter of balloon (m)",
+        max_digits=16, decimal_places=4, null=True, blank=True)
 
     class Meta:
         verbose_name_plural = "launches"
