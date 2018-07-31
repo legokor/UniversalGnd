@@ -21,6 +21,7 @@ function updateCurrentTime() {
 
 function updateTask(data) {
     let taskDiv = document.getElementById("task-" + data.id);
+    taskDiv.innerHTML = printItem(data).innerHTML;
     if (data.actual_timestamp !== null) {
         taskDiv.classList.add('completed');
     } else {
