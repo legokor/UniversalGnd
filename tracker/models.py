@@ -52,4 +52,5 @@ class Task(models.Model):
             'actual_timestamp': format(self.actual_timestamp, 'U') if self.actual_timestamp is not None else None,
             'has_value': self.has_value,
             'value': str(self.value),
+            'launch': self.launch.id,
         }
