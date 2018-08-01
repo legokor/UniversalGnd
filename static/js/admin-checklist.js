@@ -16,7 +16,8 @@ function printItem(item, group = null) {
     if (item.actual_timestamp !== null) {
         checkbox.checked = 'checked';
     }
-    checkbox.addEventListener('click', function () {
+
+    var sendUpdate = function () {
         let request = new XMLHttpRequest();
         request.open('POST', '../update-item/' + item.id);
         request.setRequestHeader('Content-Type', 'application/json');
@@ -24,7 +25,9 @@ function printItem(item, group = null) {
             'value': document.getElementById('value-' + item.id) === null ? null : parseFloat(document.getElementById('value-' + item.id).value),
             'finished': checkbox.checked
         }));
-    });
+    };
+
+    checkbox.addEventListener('click', sendUpdate);
     element.appendChild(checkbox);
 
     if (item.has_value) {
@@ -35,6 +38,7 @@ function printItem(item, group = null) {
         if (item.value) {
             input.value = item.value;
         }
+        input.addEventListener('input', sendUpdate);
         element.appendChild(input);
     }
 
