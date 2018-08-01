@@ -154,30 +154,37 @@ class Consumer(WebsocketConsumer):
     def task_update(self, event):
         self.send(text_data=json.dumps({'taskData': event['message']}))
 
+    def setup_mam_2018(self, data):
+        self.connector = SerialConnector(115200, data['com'])
+        self.connector_socket = SocketConnector('192.168.4.1', 1360)
+        self.wrapper_socket = Wrapper(r'.*', broadcast_string, self.connector_socket.send)
+        bound = partial(parse_mam, self.connector_socket.send)
+        self.connector_socket.start_listening(callback=self.wrapper_socket.consume_character)
+        self.wrapper = Wrapper(MAM_STRING, bound, self.connector.send)
+        self.connector.start_listening(callback=self.wrapper.consume_character)
+
+    def setup_upra(self, data):
+        self.connector = SerialConnector(57600, data['com'])
+        self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
+        self.connector.start_listening(callback=self.wrapper.consume_character)
+
     def receive(self, text_data):
         data = json.loads(text_data)
 
         if data['action'] == 'init':
             if data['target'] == 'mam':
-                self.connector = SerialConnector(115200, data['com'])
-                self.connector_socket = SocketConnector('192.168.4.1', 1360)
-                self.wrapper_socket = Wrapper(r'.*', broadcast_string, self.connector_socket.send)
-                bound = partial(parse_mam, self.connector_socket.send)
-                self.connector_socket.start_listening(callback=self.wrapper_socket.consume_character)
-                self.wrapper = Wrapper(MAM_STRING, bound, self.connector.send)
-                self.connector.start_listening(callback=self.wrapper.consume_character)
+                self.setup_mam_2018(data)
 
             if data['target'] == 'upra':
-                self.connector = SerialConnector(57600, data['com'])
-                self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
-                self.connector.start_listening(callback=self.wrapper.consume_character)
+                self.setup_upra(data)
 
         if data['action'] == 'send':
             self.connector_socket.send(data['data'])
 
         if data['action'] == 'get-launches':
-            self.send(text_data=json.dumps(
-                {'launches': [{'id': launch.id, 'name': launch.name} for launch in Launch.objects.all()]}))
+            self.send(text_data=json.dumps({'launches': [
+                {'id': launch.id, 'name': launch.name} for launch in Launch.objects.all()
+            ]}))
 
         if data['action'] == 'fetch-launch':
             try:
