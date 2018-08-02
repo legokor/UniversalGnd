@@ -3,3 +3,4 @@ channels
 pySerial
 channels-redis
 asgiref
+bs4
