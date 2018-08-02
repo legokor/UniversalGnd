@@ -25,6 +25,10 @@ function upraParse(data) {
         console.log(data);
         return;
     }
+    if ('prediction' in data) {
+        parsePredictedFlightPath(data.prediction);
+        return;
+    }
     console.log(data.latitude);
     console.log(data.longitude);
     var latitude = data.latitude;

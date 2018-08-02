@@ -1,5 +1,6 @@
 let map = undefined;
 let flightPath = undefined;
+let predictedFlightPath = undefined;
 let coordinatesArray = [];
 
 function parseCoordinatesMessage(data) {
@@ -19,6 +20,29 @@ function parseCoordinatesMessage(data) {
     }
 
     map.panTo(coordinates);
+}
+
+// Gets the "prediction" part of the JSON the predictor returns
+function parsePredictedFlightPath(prediction) {
+
+    var predictedCoordinatesArray = [];
+
+    prediction.forEach(function (datapoint) {
+        predictedCoordinatesArray.push({lat: datapoint.lat, lng: datapoint.lon});
+    });
+
+    if (predictedFlightPath === undefined) {
+        let flightPath = new google.maps.Polyline({
+            path: predictedCoordinatesArray,
+            geodesic: true,
+            strokeColor: '#FFFF00',
+            strokeOpacity: 0.5,
+            strokeWeight: 5
+        });
+        flightPath.setMap(map);
+    } else {
+        flightPath.setPath(predictedCoordinatesArray);
+    }
 }
 
 function initMap() {

@@ -134,6 +134,8 @@ class Consumer(WebsocketConsumer):
         self.connector_socket = None
         self.wrapper_socket = None
         self.process = None
+        self.process_predictor = None
+        self.selected_launch = None
 
     def connect(self):
         async_to_sync(self.channel_layer.group_add)(
@@ -154,6 +156,30 @@ class Consumer(WebsocketConsumer):
     def task_update(self, event):
         self.send(text_data=json.dumps({'taskData': event['message']}))
 
+    def handle_upra_packet(self, packet_str):
+        parse_upra(packet_str)
+        if self.process_predictor is not None:
+            self.process_predictor.send({
+                'cmd': 'senduprapacket',
+                'flightname': self.selected_launch.name,
+                'packet': packet_str})
+            self.process_predictor.send({
+                'cmd': 'predict',
+                'flightname': self.selected_launch.name,
+                'timestep': 5})
+
+    def handle_predictor_output(self, output_str):
+        output = json.loads(output_str)
+        if 'prediction' in output:
+            self.send(text_data=json.dumps(
+                {'type': 'upra', 'prediction': output['prediction']}))
+        if 'bprops' in output:
+            self.send(text_data=json.dumps(
+                {'type': 'upra', 'bprops': output['bprops']}))
+        if 'msg' in output:
+            self.send(text_data=json.dumps(
+                {'message': '[Predictor] ' + output['msg']}))
+
     def setup_mam_2018(self, data):
         self.connector = SerialConnector(115200, data['com'])
         self.connector_socket = SocketConnector('192.168.4.1', 1360)
@@ -165,8 +191,13 @@ class Consumer(WebsocketConsumer):
 
     def setup_upra(self, data):
         self.connector = SerialConnector(57600, data['com'])
-        self.wrapper = Wrapper(UPRA_STRING, parse_upra, self.connector.send)
+        self.wrapper = Wrapper(UPRA_STRING, handle_upra_packet, self.connector.send)
         self.connector.start_listening(callback=self.wrapper.consume_character)
+
+    def setup_predictor(self):
+        self.process_predictor = ConsoleConnector('predictor')
+        # TODO: Handle executable not found
+        self.process_predictor.start_listening(callback=self.handle_predictor_output)
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -177,6 +208,9 @@ class Consumer(WebsocketConsumer):
 
             if data['target'] == 'upra':
                 self.setup_upra(data)
+
+            if data['target'] == 'predictor':
+                self.setup_predictor()
 
         if data['action'] == 'send':
             self.connector_socket.send(data['data'])
@@ -192,6 +226,7 @@ class Consumer(WebsocketConsumer):
             except Launch.DoesNotExist:
                 self.send(text_data=json.dumps({'message': 'Does not exist'}))
             else:
+                self.selected_launch = launch
                 self.send(text_data=json.dumps({'type': 'checklist', 'tasks': launch.get_organized_tasks()}))
 
         if data['action'] == 'program-name':
