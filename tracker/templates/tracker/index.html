@@ -3,75 +3,145 @@
 {% load static %}
 
 {% block content %}
-    <h1>UPRA checklist</h1>
-    <div>
-        <select id='task-selector'></select>
-        <button id='task-selector-submit'>Fetch</button>
-    </div>
-    <div id='task-matrix'>
-    </div>
-    <div id='map'></div>
-    <div id='secondary'>
-        <div id='console'>
-            <input id='program-name' placeholder='Program path'><button id='program-name-submit'>Submit</button>
-            <input id='program-command' placeholder='Command'><button id='program-command-send'>Send</button>
-            <div id='program-output'></div>
-        </div>
-        <div id='init'>
-            <input id='com' type='text' placeholder='COM port' value='COM4'>
-            <button id='init-mam'>MaM 2018</button>
-            <button id='init-upra'>UPRA</button>
-        </div>
-        <div id='mam-status'>
-            <button id='switch-1'>SW1</button>
-            <button id='switch-2'>SW2</button>
-            <button id='switch-3'>SW3</button>
-            <button id='switch-4'>SW4</button>
-            <button id='button-1'>BTN1</button>
-            <button id='button-2'>BTN2</button>
-            <button id='pot'>POT: ?</button>
-            <button id='mode'>MODE: ?</button>
-            <button id='moving-forward'>FWD</button>
-            <button id='moving-backward'>BWD</button>
-        </div>
-        <div class='panel'>
-            <div id='coordinates'></div>
-            <div id='response'>
-                <input id='text' placeholder='Message'>
-                <button id='send'>
-                    Send
-                </button>
+    <div id="main-container" class="container-fluid">
+        <div class="row">
+            <div id="map-wrapper" class="col-md-6">
+                <div id="map"></div>
             </div>
-            <div id='controls'>
-                <table>
-                    <tr>
-                        <td><label for='roll'>Roll</label></td>
-                        <td><input type='range' min='0' max='360' value='0' id='roll'></td>
-                        <td><input id='roll-value' disabled></td>
-                    </tr>
-                    <tr>
-                        <td><label for='pitch'>Pitch</label></td>
-                        <td><input type='range' min='0' max='360' value='0' id='pitch'></td>
-                        <td><input id='pitch-value' disabled></td>
-                    </tr>
-                    <tr>
-                        <td><label for='yaw'>Yaw</label></td>
-                        <td><input type='range' min='0' max='360' value='0' id='yaw'></td>
-                        <td><input id='yaw-value' disabled></td>
-                    </tr>
-                    <tr>
-                        <td><label for='throttle'>Throttle</label></td>
-                        <td><input type='range' min='0' max='100' value='0' id='throttle'></td>
-                        <td><input id='throttle-value' disabled></td>
-                    </tr>
-                </table>
+            <div class="col-md-6">
+                <div class="container-fluid">
+                    <div class="row">
+                        <ul id="main-tabs" class="nav nav-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="init-tab"
+                                   data-toggle="tab" href="#init" role="tab">Init</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="tasks-tab"
+                                   data-toggle="tab" href="#tasks" role="tab">Tasks</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="mam-controls-tab"
+                                   data-toggle="tab" href="#mam-controls" role="tab">MaM Controls</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="qc-controls-tab"
+                                   data-toggle="tab" href="#qc-controls" role="tab">QC Controls</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="program-console-tab"
+                                   data-toggle="tab" href="#program-console" role="tab">Program Console</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="debug-console-tab"
+                                   data-toggle="tab" href="#debug-console" role="tab">Debug Console</a>
+                            </li>
+                        </ul>
+                        <div id="main-tab-content" class="tab-content">
+                            <div id='init' class="tab-pane show active">
+                                <div class="input-group input-group-lg">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Serial port</span>
+                                    </div>
+                                    <input id='com' class="form-control dropdown" type='text' placeholder="eg. COM4 on Windows or /dev/ttyACM0 on Linux" value='COM4'>
+                                </div>
+                                <button id='init-upra' class="btn btn-outline-primary btn-lg">Init UPRA</button>
+                                <button id='init-mam' class="btn btn-outline-primary btn-lg">Init MaM 2018</button>
+                            </div>
+                            <div id="tasks" class="tab-pane">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">Flight</span>
+                                    </div>
+                                    <select id='task-selector' class="form-control custom-select"></select>
+                                    <div class="input-group-append">
+                                        <button id='task-selector-submit' class="btn btn-outline-secondary">Fetch</button>
+                                    </div>
+                                </div>
+                                <div class="task-matrix-wrapper">
+                                    <div id='task-matrix'></div>
+                                </div>
+                            </div>
+                            <div id='mam-controls' class="tab-pane">
+                                <div class="btn-group" role="group">
+                                    <button id='switch-1' class="btn btn-secondary">SW1</button>
+                                    <button id='switch-2' class="btn btn-secondary">SW2</button>
+                                    <button id='switch-3' class="btn btn-secondary">SW3</button>
+                                    <button id='switch-4' class="btn btn-secondary">SW4</button>
+                                </div>
+                                <!--div class="btn-group" role="group"-->
+                                    <button id='button-1' class="btn btn-primary">BTN1</button>
+                                    <button id='button-2' class="btn btn-primary">BTN2</button>
+                                <!--/div-->
+                                <!--div class="btn-group" role="group"-->
+                                    <button id='pot' class="btn btn-info">POT: ?</button>
+                                    <button id='mode' class="btn btn-info">MODE: ?</button>
+                                <!--/div-->
+                                <!--div class="btn-group" role="group"-->
+                                    <button id='moving-forward' class="btn btn-dark">FWD</button>
+                                    <button id='moving-backward' class="btn btn-dark">BWD</button>
+                                <!--/div-->
+                            </div>
+                            <div id='qc-controls' class="tab-pane">
+                                <table>
+                                    <tr>
+                                        <td><label for='roll'>Roll</label></td>
+                                        <td><input type='range' min='0' max='360' value='0' id='roll'></td>
+                                        <td><input id='roll-value' disabled></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for='pitch'>Pitch</label></td>
+                                        <td><input type='range' min='0' max='360' value='0' id='pitch'></td>
+                                        <td><input id='pitch-value' disabled></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for='yaw'>Yaw</label></td>
+                                        <td><input type='range' min='0' max='360' value='0' id='yaw'></td>
+                                        <td><input id='yaw-value' disabled></td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for='throttle'>Throttle</label></td>
+                                        <td><input type='range' min='0' max='100' value='0' id='throttle'></td>
+                                        <td><input id='throttle-value' disabled></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id="program-console" class="tab-pane">
+                                <div class="input-group">
+                                    <input id='program-name' class="form-control" placeholder='Program path'>
+                                    <div class="input-group-append">
+                                        <button id='program-name-submit' class="btn btn-outline-secondary">Run</button>
+                                    </div>
+                                </div>
+                                <div id='program-output' class="console-output"></div>
+                                <div class="input-group console-prompt">
+                                    <input id='program-command' class="form-control" placeholder='Command'>
+                                    <div class="input-group-append">
+                                        <button id='program-command-send' class="btn btn-dark">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="debug-console" class="tab-pane">
+                                <div id='coordinates' class="console-output"></div>
+                                <div id='response' class="input-group console-prompt">
+                                    <input id='text' class="form-control" placeholder='Message'>
+                                    <div class="input-group-append">
+                                        <button id='send' class="btn btn-dark">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id='telemetry' class="row">
+                        <div class='col-lg-6'>
+                            <canvas id='altitudeChart'></canvas>
+                        </div>
+                        <div class='col-lg-6'>
+                            <canvas id='extTempChart'></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-        <div class='panel'>
-            <canvas id='altitudeChart'></canvas>
-        </div>
-        <div class='panel'>
-            <canvas id='extTempChart'></canvas>
         </div>
     </div>
     <script src='{% static 'js/checklist.js' %}'></script>

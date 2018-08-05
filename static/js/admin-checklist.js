@@ -1,7 +1,34 @@
+String.prototype.format = function() {
+    var args = arguments;
+
+    return this.replace(/\{(\d+)\}/g, function() {
+        return args[arguments[1]];
+    });
+};
+
 function printItem(item, group = null) {
     let date = new Date(item.projected_timestamp * 1000);
     let timeString = getUTCStringFromDate(date);
 
+
+    let wrapper_div = document.createElement('div');
+    wrapper_div.className = 'input-group input-group-lg mb-3';
+    let innerHTML_str = '\
+    <div class="input-group-prepend">\
+        <div class="input-group-text">\
+            <input type="checkbox" class="" id="checkbox-{0}" {1}></input>\
+        </div>\
+    </div>\
+    <label class="form-control input-group-text" for="checkbox-{0}">\
+        <span>{2} ({3} UTC)</span>\
+    </label>';
+    wrapper_div.innerHTML = innerHTML_str.format(
+        item.id, (item.actual_timestamp !== null ? ' checked="checked"' : ''),
+        item.title, timeString);
+
+    console.log(wrapper_div.innerHTML);
+
+/*
     let element = document.createElement('li');
     element.id = "task-" + item.id;
     let label = document.createElement('label');
@@ -16,7 +43,7 @@ function printItem(item, group = null) {
     if (item.actual_timestamp !== null) {
         checkbox.checked = 'checked';
     }
-
+*/
     var sendUpdate = function () {
         let request = new XMLHttpRequest();
         request.open('POST', '../update-item/' + item.id);
@@ -27,11 +54,13 @@ function printItem(item, group = null) {
         }));
     };
 
+    let checkbox = wrapper_div.firstElementChild.firstElementChild.firstElementChild;
     checkbox.addEventListener('click', sendUpdate);
-    element.appendChild(checkbox);
+    //element.appendChild(checkbox);
 
     if (item.has_value) {
         let input = document.createElement('input');
+        input.className = 'form-control';
         input.type = 'number';
         input.placeholder = 'Value';
         input.id = 'value-' + item.id;
@@ -39,10 +68,13 @@ function printItem(item, group = null) {
             input.value = item.value;
         }
         input.addEventListener('input', sendUpdate);
-        element.appendChild(input);
+        //let input_append_wrapper = document.createElement('div');
+        //input_append_wrapper.className = 'input-group-append';
+        //input_append_wrapper.appendChild(input);
+        wrapper_div.appendChild(input);
     }
 
-    return element;
+    return wrapper_div;
 }
 
 function printLaunchList(launches) {
@@ -68,7 +100,7 @@ function printLaunchList(launches) {
 }
 
 function printChecklist(checklist) {
-    let listDiv = document.getElementById("task-matrix");
+    let listDiv = document.getElementById("task-list");
     while (listDiv.lastChild) {
         listDiv.removeChild(listDiv.lastChild);
     }

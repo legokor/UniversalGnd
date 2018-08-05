@@ -3,11 +3,18 @@
 {% load static %}
 
 {% block content %}
-    <div>
-        <select id='task-selector'></select>
-        <button id='task-selector-submit'>Fetch</button>
+    <div id="admin-checklist-container" class="container">
+        <div id="admin-checklist-flight-select" class="input-group input-group-lg">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Flight</span>
+            </div>
+            <select id='task-selector' class="form-control custom-select"></select>
+            <div class="input-group-append">
+                <button id='task-selector-submit' class="btn btn-outline-secondary">Fetch</button>
+            </div>
+        </div>
+        <div id="task-list" class="mb-3">
+        </div>
+        <script src="{% static 'js/admin-checklist.js' %}"></script>
     </div>
-    <ul id="task-matrix">
-    </ul>
-    <script src="{% static 'js/admin-checklist.js' %}"></script>
 {% endblock %}

@@ -7,24 +7,31 @@ body {
     font-size: 100%;
     margin: 0;
     padding: 0;
+    background-image: linear-gradient(to right, white 10%, #eee);
 }
-
+/*
 input[type=checkbox] {
     height: 3em;
     width: 3em;
-}
+}*/
+
 
 .progress {
     display: table-cell;
     vertical-align: middle;
-    border: 1px solid black;
     padding: 5px 20px;
-    background-color: #cecece;
+    margin: 15px 5px;
+    background-color: #f5f5f5;
+    border: solid 1px #aaa;
+    border-radius: 3px;
+    box-shadow: 0px 1px 2px -1px rgba(0,0,0,0.5);
     text-align: center;
 }
 
 .progress.completed {
-    background-color: #00ff00;
+    border-color: #28a745;
+    background-color: #c3e6cb;
+    color: #28a745;
 }
 
 #leading-list {
@@ -42,16 +49,132 @@ input[type=checkbox] {
     width: 100%;
 }
 
-#map {
-    height: 400px;
+/* Put the map on the right side */
+#main-container > .row {
+    flex-direction: row-reverse;
+}
+
+#bannerimg {
+    height: 50px;
+    margin: 15px 0px;
+}
+
+#header-row {
+    align-items: center;
+}
+
+#header-time {
+    float: right;
+    margin: 15px 0;
+    padding: 0.25em 0.5em;
+    background-color: white;
+    border-radius: 3px;
+    box-shadow: 0px 1px 2px -1px rgba(0,0,0,0.5);
+}
+
+#map-wrapper {
+    height: -webkit-calc(100vh - 95px);
+    height: -moz-calc(100vh - 95px);
+    height: calc(100vh - 95px);
     width: 100%;
 }
 
-.panel {
-    display: inline-block;
-    width: 30%;
+#map {
+    height: 100%;
+    width: 100%;
+    border-radius: 3px;
+    box-shadow: 0px 1px 2px -1px rgba(0,0,0,0.5);
 }
 
-button.active {
-    background-color: lime;
+#main-tab-content {
+    padding: 15px 0;
+    border-radius: 3px 0 0 0;
+    overflow-x: auto;
+    width: 100%;
+}
+
+#main-tab-content .input-group {
+    margin-bottom: 15px;
+}
+
+#main-tab-content, #telemetry {
+    background-image: linear-gradient(to right, rgba(255,255,255,1) 95%, rgba(255,255,255,0));
+}
+
+.form-control:focus, .btn:focus {
+    box-shadow: none;
+}
+
+#init {
+    padding: 3em 0;
+    text-align: center;
+}
+.task-matrix-wrapper {
+    position: relative;
+	border-radius: 5px;
+	box-shadow: inset 0px 3px 2px -2px rgba(0,0,0,0.25), inset 0px -3px 2px -2px rgba(0,0,0,0.25);
+	background-color: white;
+}
+.task-matrix-wrapper::before {
+	content: "";
+	display: block;
+	border-radius: 5px;
+	height: 100%;
+	padding: 2px;
+	position: absolute;
+	box-sizing: border-box;
+	top: 0;
+    left: 0;
+    background-image: linear-gradient(to right, rgba(0,0,0,0.15), rgba(0,0,0,0));
+}
+.task-matrix-wrapper::after {
+	content: "";
+	display: block;
+	border-radius: 5px;
+	height: 100%;
+	padding: 2px;
+	position: absolute;
+	box-sizing: border-box;
+	top: 0;
+    right: 0;
+    background-image: linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.15));
+}
+#task-matrix {
+	overflow-x: auto;
+	/*box-shadow: inset 0px 1px 3px -1px rgba(0,0,0,0.5);*/
+	padding: 15px;
+	border-radius: 5px;
+	border-spacing: 2px;
+}
+.console-output {
+    padding: 10px;
+    background-color: #343a40;
+    border-radius: 3px 3px 0 0;
+    color: #fff;
+    font-family: Consolas, 'Lucida Console', monospace;
+    font-size: 0.85em;
+    min-height: 3em;
+    max-height: 35vh;
+    width: 100%;
+    overflow-y: auto;
+}
+.console-prompt {
+
+}
+.console-prompt input, .console-prompt input:focus {
+    border-color: #343a40;
+    border-top-color: #2c3137;
+    border-radius: 0 0 0 3px;
+    color: #fff;
+    background-color: #343a40;
+}
+.console-prompt button {
+    border-top: solid 1px #2c3137;
+    border-radius: 0 0 3px 0;
+}
+
+#admin-checklist-container {
+}
+#admin-checklist-flight-select {
+    margin: 3em 0;
 }
