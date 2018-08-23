@@ -1,6 +1,7 @@
 import json
 import re
 from functools import partial
+from datetime import datetime
 
 import channels.layers
 from asgiref.sync import async_to_sync
@@ -160,14 +161,14 @@ class Consumer(WebsocketConsumer):
     def handle_upra_packet(self, packet_str):
         parse_upra(packet_str)
         if self.process_predictor is not None:
-            self.process_predictor.send({
+            self.process_predictor.send(json.dumps({
                 'cmd': 'senduprapacket',
                 'flightname': self.selected_launch.name,
-                'packet': packet_str})
-            self.process_predictor.send({
+                'packet': packet_str}))
+            self.process_predictor.send(json.dumps({
                 'cmd': 'predict',
                 'flightname': self.selected_launch.name,
-                'timestep': 5})
+                'timestep': 5}))
 
     def handle_predictor_output(self, output_str):
         output = json.loads(output_str)
@@ -197,28 +198,28 @@ class Consumer(WebsocketConsumer):
 
     def setup_predictor(self, data):
         if self.selected_launch == None:
-            self.send(text_data=json.dumps(
-                {'message': 'Cannot initialize predictor: No launch selected.'}))
+            self.send(text_data=json.dumps({
+                'message': 'Cannot initialize predictor: No launch selected.'}))
             return
 
         balloonprops = self.selected_launch.get_balloon_properties()
         for propname in balloonprops:
             if balloonprops[propname] is None:
-                self.send(text_data=json.dumps(
-                    {'message': 'Cannot initialize predictor: Balloon property '+propname+' has no value.'}))
+                self.send(text_data=json.dumps({
+                    'message': 'Cannot initialize predictor: Balloon property '+propname+' has no value.'}))
                 return
 
-        self.process_predictor = ConsoleConnector('predictor')
+        self.process_predictor = ConsoleConnector('./predictor')
         # TODO: Handle executable not found
         self.process_predictor.start_listening(callback=self.handle_predictor_output)
 
-        weatherdate = datetime.strptime(data['weatherdate'], "%Y-%m-%d %H:%M:%S")
-        self.process_predictor.send({
+        weatherdate = datetime.strptime(data['weatherdate'], "%Y-%m-%d %H:%M")
+        self.process_predictor.send(json.dumps({
             'cmd': 'newflight',
             'flightname': self.selected_launch.name,
             'balloonprops': self.selected_launch.get_balloon_properties(),
             'weatherdata': getWeatherData(weatherdate)
-        })
+        }))
 
 
     def receive(self, text_data):
