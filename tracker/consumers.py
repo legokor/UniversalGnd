@@ -11,6 +11,7 @@ from workers.serial_connector import SerialConnector
 from workers.socket_connector import SocketConnector
 from workers.wrapper import Wrapper
 from .models import Launch
+from .weatherdata import getWeatherData
 
 
 def broadcast(message):
@@ -194,10 +195,31 @@ class Consumer(WebsocketConsumer):
         self.wrapper = Wrapper(UPRA_STRING, handle_upra_packet, self.connector.send)
         self.connector.start_listening(callback=self.wrapper.consume_character)
 
-    def setup_predictor(self):
+    def setup_predictor(self, data):
+        if self.selected_launch == None:
+            self.send(text_data=json.dumps(
+                {'message': 'Cannot initialize predictor: No launch selected.'}))
+            return
+
+        balloonprops = self.selected_launch.get_balloon_properties()
+        for propname in balloonprops:
+            if balloonprops[propname] is None:
+                self.send(text_data=json.dumps(
+                    {'message': 'Cannot initialize predictor: Balloon property '+propname+' has no value.'}))
+                return
+
         self.process_predictor = ConsoleConnector('predictor')
         # TODO: Handle executable not found
         self.process_predictor.start_listening(callback=self.handle_predictor_output)
+
+        weatherdate = datetime.strptime(data['weatherdate'], "%Y-%m-%d %H:%M:%S")
+        self.process_predictor.send({
+            'cmd': 'newflight',
+            'flightname': self.selected_launch.name,
+            'balloonprops': self.selected_launch.get_balloon_properties(),
+            'weatherdata': getWeatherData(weatherdate)
+        })
+
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -210,7 +232,7 @@ class Consumer(WebsocketConsumer):
                 self.setup_upra(data)
 
             if data['target'] == 'predictor':
-                self.setup_predictor()
+                self.setup_predictor(data)
 
         if data['action'] == 'send':
             self.connector_socket.send(data['data'])

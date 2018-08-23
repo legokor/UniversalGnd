@@ -4,6 +4,17 @@ initButtonUpra.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'init', 'target': 'upra', 'com': com.value}));
 });
 
+var initButtonPredictor = document.getElementById('init-predictor');
+initButtonPredictor.addEventListener('click', function (event) {
+    var weatherdate = document.getElementById("weatherdate").value;
+    var weathertime = document.getElementById("weathertime").value;
+    socket.send(JSON.stringify({
+        'action': 'init',
+        'target': 'predictor',
+        'weatherdate': weatherdate +' '+ weathertime
+    }));
+});
+
 var programNameSubmit = document.getElementById('program-name-submit');
 programNameSubmit.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'program-name', 'data': document.getElementById('program-name').value}));

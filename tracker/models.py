@@ -47,6 +47,18 @@ class Launch(models.Model):
                       Task.objects.filter(launch=self, group=None).order_by('projected_timestamp')],
         }]
 
+    def get_balloon_properties(self):
+        return {
+            'balloon_dry_mass': self.balloon_dry_mass,
+            'parachute_dry_mass': self.parachute_dry_mass,
+            'payload_dry_mass': self.payload_dry_mass,
+            'nozzle_lift': self.nozzle_lift,
+            'parachute_area': self.parachute_area,
+            'parachute_drag_c': self.parachute_drag_c,
+            'balloon_drag_c': self.balloon_drag_c,
+            'design_burst_diam': self.design_burst_diam
+        }
+
 
 class TaskGroup(models.Model):
     launch = models.ForeignKey(Launch, on_delete=models.CASCADE)

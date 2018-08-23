@@ -105,10 +105,6 @@ input[type=checkbox] {
     box-shadow: none;
 }
 
-#init {
-    padding: 3em 0;
-    text-align: center;
-}
 .task-matrix-wrapper {
     position: relative;
 	border-radius: 5px;
