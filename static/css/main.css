@@ -97,7 +97,7 @@ input[type=checkbox] {
     margin-bottom: 15px;
 }
 
-#main-tab-content, #telemetry {
+#main-tab-content, #bottom-panel {
     background-image: linear-gradient(to right, rgba(255,255,255,1) 95%, rgba(255,255,255,0));
 }
 
