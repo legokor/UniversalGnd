@@ -1,0 +1,78 @@
+{% extends 'tracker/base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div id="welcome-title">
+        <div class="container">
+            <h2 class="display-4">Welcome</h2>
+            <p class="lead text-muted">Pick a persprective:</p>
+        </div>
+    </div>
+    <div id="welcome" class="container">
+        <h3>UPRA</h3>
+        <div class="card-deck">
+            <a href="/upra/flight" class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Flight</h4>
+                    <p>Recieves overview information about the entire mission, makes decisions, coordinates the work of all the other stations.</p>
+                </div>
+            </a>
+            <a href="/checklist" class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Tasks</h4>
+                    <p>Interface to administer launch tasks and collect hand-measured data for them.</p>
+                </div>
+            </a>
+            <a href="/upra/com" class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Communication</h4>
+                    <p>Responsible for the radio communication. Recieves raw packets and radio connection information.</p>
+                </div>
+            </a>
+            <a href="/upra/telemetry" class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Telemetry</h4>
+                    <p>Uses the recieved GPS data to keep track of the current location of the balloon, and predict its future location.</p>
+                </div>
+            </a>
+            <div class="card text-muted">
+                <div class="card-body">
+                    <h4 class="card-title">Housekeeping</h4>
+                    <p>Monitors the life signs of the balloon: module temperatures, currents, bus voltage, battery charge, etc.</p>
+                </div>
+                <div class="card-footer">
+                    Not implemented.
+                </div>
+            </div>
+            <div class="card text-muted">
+                <div class="card-body">
+                    <h4 class="card-title">Science</h4>
+                    <p>Provides a data display and control interface to the science payload carried by the balloon.</p>
+                </div>
+                <div class="card-footer">
+                    Not implemented.
+                </div>
+            </div>
+        </div>
+        <h3>MaM</h3>
+        <div class="card-deck">
+            <a href=/mam/mam-2018 class="card">
+                <div class="card-body">
+                    <h4 class="card-title">MaM 2018</h4>
+                    <p>Control interface for the robot built for the 'Magyarok a Marson' (Hungarians on Mars) 2018 competition.</p>
+                </div>
+            </a>
+        </div>
+        <h3>QuadCopter</h3>
+        <div class="card-deck">
+            <a href="/qc/main" class="card">
+                <div class="card-body">
+                    <h4 class="card-title">QC Main</h4>
+                    <p>Control interface for the QuadCopter project.</p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+{% endblock %}
