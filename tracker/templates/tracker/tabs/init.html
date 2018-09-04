@@ -1,0 +1,32 @@
+<h3>Serial connection</h3>
+<div class="input-group input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Serial port</span>
+    </div>
+    <input id='com' class="form-control" type='text' placeholder="eg. COM4 on Windows or /dev/ttyACM0 on Linux" value='COM4'>
+    <div class="input-group-append">
+        <button id='init-upra' class="btn btn-outline-primary">Init UPRA</button>
+        <button id='init-mam' class="btn btn-outline-primary">Init MaM 2018</button>
+    </div>
+</div>
+<h3>UPRA Launch</h3>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Flight</span>
+    </div>
+    <select id='task-selector' class="form-control custom-select"></select>
+    <div class="input-group-append">
+        <button id='task-selector-submit' class="btn btn-outline-primary">Select</button>
+    </div>
+</div>
+<h3>UPRA-Predictor</h3>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <span class="input-group-text">Use weather data from:</span>
+    </div>
+    <input id='weatherdate' class="form-control" type='date'/>
+    <input id='weathertime' class="form-control" type='time'/>
+    <div class="input-group-append">
+        <button id='init-predictor' class="btn btn-outline-primary">Start</button>
+    </div>
+</div>

@@ -11,7 +11,18 @@ from .consumers import broadcast
 
 
 def index(request):
-    return render(request, 'tracker/index.html')
+    context = {
+        'pagetitle': 'UPRA',
+        'maintabs': [
+            {'id': 'init', 'title': 'Init', 'template': 'tracker/tabs/init.html'},
+            {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/tabs/tasks.html'},
+            {'id': 'mam-controls', 'title': 'MaM controls', 'template': 'tracker/tabs/mam-controls.html'},
+            {'id': 'qc-controls', 'title': 'QC controls', 'template': 'tracker/tabs/qc-controls.html'},
+            {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/tabs/program-console.html'},
+            {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/tabs/debug-console.html'}
+        ]
+    }
+    return render(request, 'tracker/index.html', context)
 
 
 @login_required(login_url='/admin/login/')
