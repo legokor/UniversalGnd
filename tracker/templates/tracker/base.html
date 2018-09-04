@@ -17,6 +17,10 @@
         <div class="col-auto">
             <img id="bannerimg" src="{% static 'img/banner.png' %}" alt="UniversalGND"/>
         </div>
+        <div class="col-auto">
+        {% block header-content %}
+        {% endblock %}
+        </div>
         <div class="col">
             <p id='header-time'>The current time is <span id='current-time'></span> UTC</p>
         </div>
