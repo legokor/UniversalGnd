@@ -14,13 +14,15 @@ def index(request):
     context = {
         'pagetitle': 'UPRA',
         'maintabs': [
-            {'id': 'init', 'title': 'Init', 'template': 'tracker/tabs/init.html'},
-            {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/tabs/tasks.html'},
-            {'id': 'mam-controls', 'title': 'MaM controls', 'template': 'tracker/tabs/mam-controls.html'},
-            {'id': 'qc-controls', 'title': 'QC controls', 'template': 'tracker/tabs/qc-controls.html'},
-            {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/tabs/program-console.html'},
-            {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/tabs/debug-console.html'}
-        ]
+            {'id': 'init', 'title': 'Init', 'template': 'tracker/panels/init.html'},
+            {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/panels/tasks.html'},
+            {'id': 'mam-controls', 'title': 'MaM controls', 'template': 'tracker/panels/mam-controls.html'},
+            {'id': 'qc-controls', 'title': 'QC controls', 'template': 'tracker/panels/qc-controls.html'},
+            {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/panels/program-console.html'},
+            {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
+        ],
+        'showmap': True,
+        'bottom_panel_template': 'tracker/panels/telemetry-graphs.html'
     }
     return render(request, 'tracker/index.html', context)
 
