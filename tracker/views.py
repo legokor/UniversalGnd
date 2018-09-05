@@ -18,6 +18,7 @@ def mam(request):
         'pagetitle': 'MaM',
         'maintabs': [
             {'id': 'init', 'title': 'Init', 'template': 'tracker/panels/init-mam.html'},
+            {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/panels/tasks.html'},
             {'id': 'mam-controls', 'title': 'MaM controls', 'template': 'tracker/panels/mam-controls.html'},
             {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
         ],
@@ -30,6 +31,7 @@ def quadcopter(request):
     context = {
         'pagetitle': 'QuadCopter',
         'maintabs': [
+            {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/panels/tasks.html'},
             {'id': 'qc-controls', 'title': 'QC controls', 'template': 'tracker/panels/qc-controls.html'},
             {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/panels/program-console.html'},
             {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
