@@ -168,7 +168,7 @@ input[type=checkbox] {
 	border-spacing: 2px;
 }
 .console-output {
-    padding: 10px;
+    padding: 10px 0;
     background-color: #343a40;
     border-radius: 3px 3px 0 0;
     color: #fff;
@@ -179,6 +179,27 @@ input[type=checkbox] {
     width: 100%;
     overflow-y: auto;
 }
+.console-msg {
+    display: table-row;
+    padding: 0.25em 0;
+    margin: 0.25em 10px;
+    border-bottom: solid 1px #343a40;
+    color: rgba(255,255,255,0.75);
+}
+.console-msg:hover, .console-msg:last-child {
+    color: white;
+}
+.console-msg:last-child {
+    border-bottom: none;
+}
+.console-output {
+    display: table;
+    border-spacing: 10px 0px;
+}
+.console-msg-text, .console-msg-time {
+  display: table-cell;
+}
+
 .console-prompt {
 
 }

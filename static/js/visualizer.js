@@ -37,21 +37,18 @@ function parseGenericMessage(data) {
     }
 }
 
+let debugConsole = new Console(
+    document.getElementById('debug-messages'),
+    function (text) { socket.send(JSON.stringify({'action': 'send', 'data': text})); }
+);
+
 function displayMessage(data) {
-    document.getElementById('coordinates').innerHTML = data;
+    debugConsole.recieveMessage(data);
 }
 
 function updateDestination(location) {
     destination = location;
     socket.send(JSON.stringify({'destination': {"longitude": location.lng(), "latitude": location.lat()}}));
-}
-
-function sendMessage() {
-    let input = document.getElementById('text');
-
-    let text = input.value;
-    input.value = '';
-    socket.send(JSON.stringify({'action': 'send', 'data': text}));
 }
 
 function updateControlValue(name, value) {
@@ -78,11 +75,6 @@ document.addEventListener("keydown", function (event) {
 });
 
 window.onload = function () {
-    let button = document.getElementById('send');
-    button.addEventListener('click', function () {
-        sendMessage();
-    });
-
     for (let field in controlFields) {
         let input = document.getElementById(field);
         let text = document.getElementById(field + '-value');

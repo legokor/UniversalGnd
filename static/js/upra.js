@@ -20,10 +20,10 @@ programNameSubmit.addEventListener('click', function (event) {
     socket.send(JSON.stringify({'action': 'program-name', 'data': document.getElementById('program-name').value}));
 });
 
-var programCommandSend = document.getElementById('program-command-send');
-programCommandSend.addEventListener('click', function (event) {
-    socket.send(JSON.stringify({'action': 'program-command', 'data': document.getElementById('program-command').value}));
-});
+let programConsole = new Console(
+    document.getElementById('program-messages'),
+    function (sentText) { socket.send(JSON.stringify({'action': 'program-command', 'data': sentText})); }
+);
 
 var taskSelectSend = document.getElementById('task-selector-submit');
 taskSelectSend.addEventListener('click', function (event) {
@@ -33,7 +33,7 @@ taskSelectSend.addEventListener('click', function (event) {
 
 function upraParse(data) {
     if ('command-output' in data) {
-        console.log(data);
+        programConsole.recieveMessage(data);
         return;
     }
     if ('prediction' in data) {
