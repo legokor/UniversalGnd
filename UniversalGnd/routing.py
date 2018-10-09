@@ -1,5 +1,5 @@
 from channels.auth import AuthMiddlewareStack
-from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.routing import ProtocolTypeRouter, ChannelNameRouter, URLRouter
 import tracker.routing
 
 application = ProtocolTypeRouter({
@@ -9,4 +9,7 @@ application = ProtocolTypeRouter({
             tracker.routing.websocket_urlpatterns
         )
     ),
+    'channel': ChannelNameRouter(
+        tracker.routing.gnd_workers
+    )
 })

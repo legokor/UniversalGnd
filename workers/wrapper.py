@@ -2,9 +2,9 @@ import re
 
 
 class Wrapper:
-    def __init__(self, pattern, consumer, sender):
+    def __init__(self, pattern, reciever, sender):
         self.pattern = pattern
-        self.consumer = consumer
+        self.reciever = reciever
         self.sender = sender
         self.buffer = ""
 
@@ -18,7 +18,7 @@ class Wrapper:
             self.buffer = ""
 
     def digest_message(self, message):
-        self.consumer(message)
+        self.reciever(message)
 
     def send(self, message):
         self.sender(message)

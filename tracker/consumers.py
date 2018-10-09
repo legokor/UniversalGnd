@@ -6,6 +6,7 @@ from datetime import datetime
 import channels.layers
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
+from channels.consumer import SyncConsumer
 
 from workers.console_connector import ConsoleConnector
 from workers.serial_connector import SerialConnector
@@ -31,23 +32,6 @@ def broadcast_string(message):
     MAM_RECEIVED = True
     MAM_SENT = False
     broadcast({'message': message})
-
-
-def parse_upra(message):
-    match = re.search(UPRA_STRING, message)
-    broadcast({'type': 'upra', 'data': {
-        'callsign': match.group(1),
-        'messageid': match.group(2),
-        'hours': match.group(3),
-        'minutes': match.group(4),
-        'seconds': match.group(5),
-        'latitude': match.group(6),
-        'longitude': match.group(7),
-        'altitude': match.group(8),
-        'externaltemp': match.group(9),
-        'obctemp': match.group(10),
-        'comtemp': match.group(11),
-    }})
 
 
 MAM_STATE = 'VEHICLE'
@@ -124,7 +108,6 @@ def parse_mam(callback, message):
     broadcast({'type': 'mam', 'data': data})
 
 
-UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-]?.{4}\..{3}),([+-]?.{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
 MAM_STRING = r'(\d{4})(\d{2})(\d{3})'
 
 
@@ -136,7 +119,6 @@ class Consumer(WebsocketConsumer):
         self.connector_socket = None
         self.wrapper_socket = None
         self.process = None
-        self.process_predictor = None
         self.selected_launch = None
 
     def connect(self):
@@ -151,6 +133,11 @@ class Consumer(WebsocketConsumer):
             "group",
             self.channel_name
         )
+        if self.selected_launch is not None:
+            async_to_sync(self.channel_layer.group_discard)(
+                self.selected_launch.name,
+                self.channel_name
+            )
 
     def basic_send(self, event):
         self.send(text_data=json.dumps(event['message']))
@@ -158,29 +145,12 @@ class Consumer(WebsocketConsumer):
     def task_update(self, event):
         self.send(text_data=json.dumps({'taskData': event['message']}))
 
-    def handle_upra_packet(self, packet_str):
-        parse_upra(packet_str)
-        if self.process_predictor is not None:
-            self.process_predictor.send(json.dumps({
-                'cmd': 'senduprapacket',
-                'flightname': self.selected_launch.name,
-                'packet': packet_str}))
-            self.process_predictor.send(json.dumps({
-                'cmd': 'predict',
-                'flightname': self.selected_launch.name,
-                'timestep': 5}))
-
-    def handle_predictor_output(self, output_str):
-        output = json.loads(output_str)
-        if 'prediction' in output:
-            self.send(text_data=json.dumps(
-                {'type': 'upra', 'prediction': output['prediction']}))
-        if 'bprops' in output:
-            self.send(text_data=json.dumps(
-                {'type': 'upra', 'bprops': output['bprops']}))
-        if 'msg' in output:
-            self.send(text_data=json.dumps(
-                {'message': '[Predictor] ' + output['msg']}))
+    def select_launch(self, launch):
+        self.selected_launch = launch
+        async_to_sync(self.channel_layer.group_add)(
+            self.selected_launch.name,
+            self.channel_name
+        )
 
     def setup_mam_2018(self, data):
         self.connector = SerialConnector(115200, data['com'])
@@ -192,9 +162,13 @@ class Consumer(WebsocketConsumer):
         self.connector.start_listening(callback=self.wrapper.consume_character)
 
     def setup_upra(self, data):
-        self.connector = SerialConnector(57600, data['com'])
-        self.wrapper = Wrapper(UPRA_STRING, handle_upra_packet, self.connector.send)
-        self.connector.start_listening(callback=self.wrapper.consume_character)
+        if self.selected_launch is None:
+            self.send(text_data=json.dumps({
+                'message': 'You need to select a launch before connecting.'}))
+            return
+
+        self.channel_layer.send('upra-gnd',
+            {'type': 'upra.connect', 'port': data['com'], 'baud': 57600, 'mission': self.selected_launch})
 
     def setup_predictor(self, data):
         if self.selected_launch == None:
@@ -209,18 +183,34 @@ class Consumer(WebsocketConsumer):
                     'message': 'Cannot initialize predictor: Balloon property '+propname+' has no value.'}))
                 return
 
-        self.process_predictor = ConsoleConnector('./predictor')
-        # TODO: Handle executable not found
-        self.process_predictor.start_listening(callback=self.handle_predictor_output)
-
         weatherdate = datetime.strptime(data['weatherdate'], "%Y-%m-%d %H:%M")
-        self.process_predictor.send(json.dumps({
-            'cmd': 'newflight',
-            'flightname': self.selected_launch.name,
-            'balloonprops': self.selected_launch.get_balloon_properties(),
-            'weatherdata': getWeatherData(weatherdate)
+
+        self.channel_layer.send('upra-gnd', {
+            'type': 'upra.predictor.start',
+        })
+        self.channel_layer.send('upra-gnd', {
+            'type': 'upra.predictor.newflight',
+            'mission': self.selected_launch,
+            'weatherdate': weatherdate
+        })
+
+    def upra_tlmpacket(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'upra',
+            'data': event['data']
         }))
 
+    def upra_predictor_balloonprops(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'upra',
+            'balloonprops': event['balloonprops']
+        }))
+
+    def upra_predictor_prediction(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'upra',
+            'prediction': event['prediction']
+        }))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -249,7 +239,7 @@ class Consumer(WebsocketConsumer):
             except Launch.DoesNotExist:
                 self.send(text_data=json.dumps({'message': 'Does not exist'}))
             else:
-                self.selected_launch = launch
+                self.select_launch(launch)
                 self.send(text_data=json.dumps({'type': 'checklist', 'tasks': launch.get_organized_tasks()}))
 
         if data['action'] == 'program-name':
@@ -259,3 +249,96 @@ class Consumer(WebsocketConsumer):
         if data['action'] == 'program-command':
             if self.process is not None:
                 self.process.send(data['data'])
+
+
+class UpraGndWorker(SyncConsumer):
+
+    UPRA_STRING = r'\$\$(.{7}),(.{3}),(.{2})(.{2})(.{2}),([+-]?.{4}\..{3}),([+-]?.{5}\..{3}),(.{5}),(.{4}),(.{3}),(.{3}),'
+
+    def __init__(self, *args, **kwargs):
+        self.connections = {}
+
+        self.flights_with_prediction = []
+        self.process_predictor = None
+
+    def parse_upra(launch, message):
+        match = re.search(UPRA_STRING, message)
+        self.channel_layer.send(launch.name, {
+            'type': 'upra.tlmpacket',
+            'data': {
+                'callsign': match.group(1),
+                'messageid': match.group(2),
+                'hours': match.group(3),
+                'minutes': match.group(4),
+                'seconds': match.group(5),
+                'latitude': match.group(6),
+                'longitude': match.group(7),
+                'altitude': match.group(8),
+                'externaltemp': match.group(9),
+                'obctemp': match.group(10),
+                'comtemp': match.group(11),
+            }
+        })
+
+    def handle_upra_packet(self, launch, packet_str):
+        parse_upra(launch, packet_str)
+        if self.process_predictor is not None:
+            self.process_predictor.send(json.dumps({
+                'cmd': 'senduprapacket',
+                'flightname': launch.name,
+                'packet': packet_str}))
+            self.process_predictor.send(json.dumps({
+                'cmd': 'predict',
+                'flightname': launch.name,
+                'timestep': 5}))
+
+    def handle_predictor_output(self, output_str):
+        output = json.loads(output_str)
+        if 'prediction' in output:
+            self.channel_layer.send(output['flightname'], {
+                'type': 'upra.predictor.prediction',
+                'prediction': output['prediction']
+            })
+        if 'bprops' in output:
+            self.channel_layer.send(output['flightname'], {
+                'type': 'upra.predictor.balloonprops',
+                'balloonprops': output['bprops']
+            })
+
+
+    def upra_connect(self, event):
+        if event['mission'] in self.connections:
+            return
+
+        connector = SerialConnector(event['baud'], event['port'])
+        self.connections[event['mission']] = Wrapper(
+            UPRA_STRING,
+            partial(self.handle_upra_packet, event['mission']),
+            connector.send)
+        connector.start_listening(
+            callback=self.connections[event['mission']].consume_character)
+
+    def upra_predictor_start(self, event):
+        if self.process_predictor is not None:
+            return
+
+        self.process_predictor = ConsoleConnector('./predictor')
+        # TODO: Handle executable not found
+        self.process_predictor.start_listening(callback=self.handle_predictor_output)
+
+    def upra_predictor_newflight(self, event):
+        if event['mission'] in self.flights_with_prediction:
+            return
+
+        weatherdate = datetime.strptime(event['weatherdate'], "%Y-%m-%d %H:%M")
+
+        self.process_predictor.send(json.dumps({
+            'cmd': 'newflight',
+            'flightname': event['mission'].name,
+            'balloonprops': event['mission'].get_balloon_properties(),
+            'weatherdata': getWeatherData(event['weatherdate'])
+        }))
+
+        self.flights_with_prediction.append(event['mission'])
+
+    

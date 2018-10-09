@@ -3,7 +3,7 @@ from django.utils.dateformat import format
 
 
 class Launch(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     balloon_dry_mass = models.DecimalField(
         "Mass of empty balloon (g)",
         max_digits=16, decimal_places=4, null=True, blank=True)
