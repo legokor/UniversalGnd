@@ -120,8 +120,7 @@ function printChecklist(checklist) {
     });
 }
 
-function messageParse(event) {
-    let data = JSON.parse(event.data);
+function messageParse(data) {
     if (data.type === 'checklist') {
         printChecklist(data.tasks);
     } else if ('launches' in data) {

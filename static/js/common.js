@@ -29,16 +29,52 @@ function updateTask(data) {
     }
 }
 
-function initWebsocket(url) {
-    socket = new WebSocket("ws://" + url);
-    socket.onopen = function (event) {
-        getLaunches();
+// Dispatches messages based on their 'type' attribute,
+// by calling the registered callbacks of that type
+function MessageDispatcher(webSocketUrl, openFunc) {
+
+    this.msgCallbacks = {};
+
+    this.registerMsgCallback = (type, func) => {
+        if (!(type in this.msgCallbacks)) {
+            this.msgCallbacks[type] = [];
+        }
+        this.msgtypes[type].append(func);
+    }
+
+    function dispatchMessage(msgTxt) {
+        console.log(msgTxt);
+        let msg = JSON.parse(msgTxt);
+
+        displayMessage(msgTxt);
+
+        // Fall back to the old messageParse function
+        // if we don't know the type or there is none
+        if (!('type' in msg) || this.msgCallbacks === undefined || !(msg['type'] in this.msgCallbacks) ) {
+            messageParse(msg);
+            return;
+        }
+
+        for (let type in Object.keys(this.msgCallbacks)) {
+            if (msg.type == type) {
+                for (let callback in this.msgCallbacks[type]) {
+                    callback(msg);
+                }
+            }
+        }
+    }
+
+    this.webSocket = new WebSocket("ws://" + webSocketUrl);
+    this.webSocket.onopen = function (event) {
+        openFunc();
     };
-    socket.onmessage = messageParse;
-    socket.onerror = function() {
+    this.webSocket.onmessage = function (event) {
+        dispatchMessage(event.data);
+    };
+    this.webSocket.onerror = function() {
         alert('error!');
     };
-    socket.onclose = function () {
+    this.webSocket.onclose = function () {
         alert('Connection to the server was lost, refresh to reconnect!');
     };
 }
@@ -51,8 +87,10 @@ function loadChecklist(checklistId) {
     socket.send(JSON.stringify({'action': "fetch", 'id': checklistId}))
 }
 
+let dispatcher = new MessageDispatcher(window.location.host + "/ws", getLaunches);
+socket = dispatcher.webSocket;
+
 updateCurrentTime();
-initWebsocket(window.location.host + "/ws");
 window.setInterval(function () {
     updateCurrentTime();
 }, 1000);

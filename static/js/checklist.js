@@ -68,10 +68,7 @@ function printLaunchList(launches) {
     }
 }
 
-function messageParse(event) {
-    console.log(event.data);
-    displayMessage(event.data);
-    let data = JSON.parse(event.data);
+function messageParse(data) {
     if (data.type === 'upra') {
         upraParse(data.data);
     } else if (data.type === 'mam') {
