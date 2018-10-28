@@ -330,8 +330,6 @@ class UpraGndWorker(SyncConsumer):
         if event['mission'] in self.flights_with_prediction:
             return
 
-        weatherdate = datetime.strptime(event['weatherdate'], "%Y-%m-%d %H:%M")
-
         self.process_predictor.send(json.dumps({
             'cmd': 'newflight',
             'flightname': event['mission'].name,
