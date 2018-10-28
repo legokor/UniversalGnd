@@ -37,15 +37,6 @@ function parseGenericMessage(data) {
     }
 }
 
-let debugConsole = new Console(
-    document.getElementById('debug-messages'),
-    function (text) { socket.send(JSON.stringify({'action': 'send', 'data': text})); }
-);
-
-function displayMessage(data) {
-    debugConsole.recieveMessage(data);
-}
-
 function updateDestination(location) {
     destination = location;
     socket.send(JSON.stringify({'destination': {"longitude": location.lng(), "latitude": location.lat()}}));
@@ -74,7 +65,7 @@ document.addEventListener("keydown", function (event) {
     }
 });
 
-window.onload = function () {
+window.addEventListener("load", function () {
     for (let field in controlFields) {
         let input = document.getElementById(field);
         let text = document.getElementById(field + '-value');
@@ -84,4 +75,4 @@ window.onload = function () {
             // updateControlValue(field, value);
         }, input);
     }
-};
+});

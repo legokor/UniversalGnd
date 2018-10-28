@@ -41,3 +41,23 @@ function Console(containerDiv, sendFunc) {
         sendMessage(promptInput.value);
     }
 }
+
+let debugConsole = null;
+
+window.addEventListener("load", function () {
+    let dbgDiv = document.getElementById('debug-messages');
+
+    if (dbgDiv != null) {
+        debugConsole = new Console(
+            dbgDiv,
+            function (text) { socket.send(JSON.stringify({'action': 'send', 'data': text})); }
+        );
+    }
+});
+
+function displayMessage(data) {
+    if (debugConsole === null) return;
+
+    debugConsole.recieveMessage(data);
+}
+
