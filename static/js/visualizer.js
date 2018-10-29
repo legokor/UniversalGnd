@@ -51,9 +51,69 @@ function updateControlValue(name, value) {
     text.value = value;
 }
 
+function ValueDisplay(cont, keyName, packetType) {
+    this.container = cont;
+    this.valueHolder = cont.getElementsByClassName('value-holder')[0];
+
+    this.updateValue = (packet) => {
+
+        this.valueHolder.innerText = packet[keyName];
+
+    }
+
+    dispatcher.subscribe(packetType, this.updateValue);
+}
+
+
+function EditableValueDisplay(cont, keyName, packetType, publishPacketType) {
+    this.container = cont;
+    this.valueHolder = cont.getElementsByClassName('value-holder')[0];
+    this.updateStatusHolder = cont.getElementsByClassName('update-status-holder')[0];
+
+    this.updateValue = (packet) => {
+
+        this.valueHolder.value = packet[keyName];
+
+    }
+
+    this.publishValue = () => {
+        let packet = {};
+        packet['type'] = publishPacketType;
+        packet[keyName] = this.valueHolder.value;
+
+        console.log(JSON.stringify(packet));
+        socket.send(JSON.stringify(packet));
+
+        if (this.updateStatusHolder != null) {
+            this.updateStatusHolder.classList.add('saving');
+            this.updateStatusHolder.classList.remove('saved');
+
+            window.setTimeout(2500, () => {
+                this.updateStatusHolder.classList.add('saved');
+                this.updateStatusHolder.classList.remove('saving');
+            });
+        }
+    }
+
+    this.valueHolder.addEventListener('blur', (event) => {
+        this.publishValue();
+    });
+    this.valueHolder.addEventListener('keydown', (event) => {
+        if (event.keyCode === 13) { // Enter
+            this.publishValue();
+        }
+    });
+
+    dispatcher.subscribe(packetType, this.updateValue);
+}
+
+let valueDisplays = [];
+let editableValueDisplays = [];
+
 document.addEventListener("keydown", function (event) {
     event = event || window.event;
 
+    // Hook up QC controls
     for (let key in controlFields) {
         let value = controlFields[key]["value"];
         if (event.keyCode === controlFields[key]["increaseKey"]) {
@@ -63,6 +123,34 @@ document.addEventListener("keydown", function (event) {
             // updateControlValue(key, value - 1);
         }
     }
+
+    // Hook up ValueDisplays
+    document.getElementsByClassName('value-display').forEach((cont, idx, listObj) => {
+        if (cont.hasAttribute('data-packet-type')) {
+            let packetType = cont.getAttribute('data-packet-type');
+
+            let keyName = 'value';
+            if (cont.hasAttribute('data-key-name')) {
+                keyName = cont.getAttribute('data-key-name');
+            }
+
+            valueDisplays.push(new ValueDisplay(cont, keyName, packetType));
+        }
+    });
+    // Hook up EditableValueDisplays
+    document.getElementsByClassName('value-display-editable').forEach((cont, idx, listObj) => {
+        if (cont.hasAttribute('data-packet-type') && cont.hasAttribute('data-publish-packet-type')) {
+            let packetType = cont.getAttribute('data-packet-type');
+            let publishPacketType = cont.getAttribute('data-publish-packet-type');
+
+            let keyName = 'value';
+            if (cont.hasAttribute('data-key-name')) {
+                keyName = cont.getAttribute('data-key-name');
+            }
+
+            editableValueDisplays.push(new EditableValueDisplay(cont, keyName, packetType, publishPacketType));
+        }
+    });
 });
 
 window.addEventListener("load", function () {

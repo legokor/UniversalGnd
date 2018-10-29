@@ -35,14 +35,16 @@ function MessageDispatcher(webSocketUrl, openFunc) {
 
     this.msgCallbacks = {};
 
-    this.registerMsgCallback = (type, func) => {
+    // Register a callback to be called for every
+    // recieved message of the given type
+    this.subscribe = (type, func) => {
         if (!(type in this.msgCallbacks)) {
             this.msgCallbacks[type] = [];
         }
         this.msgtypes[type].append(func);
     }
 
-    function dispatchMessage(msgTxt) {
+    this.dispatchMessage = (msgTxt) => {
         console.log(msgTxt);
         let msg = JSON.parse(msgTxt);
 
@@ -50,7 +52,7 @@ function MessageDispatcher(webSocketUrl, openFunc) {
 
         // Fall back to the old messageParse function
         // if we don't know the type or there is none
-        if (!('type' in msg) || this.msgCallbacks === undefined || !(msg['type'] in this.msgCallbacks) ) {
+        if (!('type' in msg) ||  !(msg['type'] in this.msgCallbacks) ) {
             messageParse(msg);
             return;
         }
@@ -68,8 +70,8 @@ function MessageDispatcher(webSocketUrl, openFunc) {
     this.webSocket.onopen = function (event) {
         openFunc();
     };
-    this.webSocket.onmessage = function (event) {
-        dispatchMessage(event.data);
+    this.webSocket.onmessage = (event) => {
+        this.dispatchMessage(event.data);
     };
     this.webSocket.onerror = function() {
         alert('error!');
