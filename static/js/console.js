@@ -27,7 +27,9 @@ function Console(containerDiv, sendFunc) {
     function recieveMessage(msgTxt) {
         let msg = new ConsoleMessage(msgTxt);
         messages.push(msg);
+
         outputContainer.appendChild(msg.container);
+        outputContainer.scrollTop = outputContainer.scrollHeight;
     };
     this.recieveMessage = recieveMessage;
 

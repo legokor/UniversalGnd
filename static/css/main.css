@@ -171,6 +171,7 @@ input[type=checkbox] {
     padding: 10px 0;
     background-color: #343a40;
     border-radius: 3px 3px 0 0;
+    border-spacing: 10px 0px;
     color: #fff;
     font-family: Consolas, 'Lucida Console', monospace;
     font-size: 0.85em;
@@ -191,10 +192,6 @@ input[type=checkbox] {
 }
 .console-msg:last-child {
     border-bottom: none;
-}
-.console-output {
-    display: table;
-    border-spacing: 10px 0px;
 }
 .console-msg-text, .console-msg-time {
   display: table-cell;
