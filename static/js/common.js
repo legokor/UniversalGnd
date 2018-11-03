@@ -41,7 +41,7 @@ function MessageDispatcher(webSocketUrl, openFunc) {
         if (!(type in this.msgCallbacks)) {
             this.msgCallbacks[type] = [];
         }
-        this.msgtypes[type].append(func);
+        this.msgCallbacks[type].push(func);
     }
 
     this.dispatchMessage = (msgTxt) => {
@@ -57,13 +57,13 @@ function MessageDispatcher(webSocketUrl, openFunc) {
             return;
         }
 
-        for (let type in Object.keys(this.msgCallbacks)) {
+        Object.keys(this.msgCallbacks).forEach((type) => {
             if (msg.type == type) {
-                for (let callback in this.msgCallbacks[type]) {
+                this.msgCallbacks[type].forEach( (callback) => {
                     callback(msg);
-                }
+                });
             }
-        }
+        });
     }
 
     this.webSocket = new WebSocket("ws://" + webSocketUrl);

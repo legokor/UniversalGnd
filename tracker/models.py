@@ -49,14 +49,14 @@ class Launch(models.Model):
 
     def get_balloon_properties(self):
         return {
-            'balloon_dry_mass': self.balloon_dry_mass,
-            'parachute_dry_mass': self.parachute_dry_mass,
-            'payload_dry_mass': self.payload_dry_mass,
-            'nozzle_lift': self.nozzle_lift,
-            'parachute_area': self.parachute_area,
-            'parachute_drag_c': self.parachute_drag_c,
-            'balloon_drag_c': self.balloon_drag_c,
-            'design_burst_diam': self.design_burst_diam
+            'balloon_dry_mass': float(self.balloon_dry_mass),
+            'parachute_dry_mass': float(self.parachute_dry_mass),
+            'payload_dry_mass': float(self.payload_dry_mass),
+            'nozzle_lift': float(self.nozzle_lift),
+            'parachute_area': float(self.parachute_area),
+            'parachute_drag_c': float(self.parachute_drag_c),
+            'balloon_drag_c': float(self.balloon_drag_c),
+            'design_burst_diam': float(self.design_burst_diam)
         }
 
 

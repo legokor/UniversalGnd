@@ -51,35 +51,49 @@ function updateControlValue(name, value) {
     text.value = value;
 }
 
-function ValueDisplay(cont, keyName, packetType) {
-    this.container = cont;
-    this.valueHolder = cont.getElementsByClassName('value-holder')[0];
+class ValueDisplay {
+    constructor(cont, keyName, packetType) {
+        this.keyName = keyName;
+        this.packetType = packetType;
 
-    this.updateValue = (packet) => {
+        let valueHolder = cont.getElementsByClassName('value-holder')[0];
 
-        this.valueHolder.innerText = packet[keyName];
-
+        dispatcher.subscribe(packetType, (packet) => { this.updateValue(packet); });
     }
 
-    dispatcher.subscribe(packetType, this.updateValue);
+    updateValue(packet) {
+        this.valueHolder.innerText = packet[this.keyName];
+    }
 }
 
 
-function EditableValueDisplay(cont, keyName, packetType, publishPacketType) {
-    this.container = cont;
-    this.valueHolder = cont.getElementsByClassName('value-holder')[0];
-    this.updateStatusHolder = cont.getElementsByClassName('update-status-holder')[0];
+class EditableValueDisplay {
 
-    this.updateValue = (packet) => {
+    constructor(cont, keyName, packetType, publishPacketType) {
+        this.keyName = keyName;
+        this.packetType = packetType;
+        this.publishPacketType = publishPacketType;
 
-        this.valueHolder.value = packet[keyName];
+        this.valueHolder = cont.getElementsByClassName('value-holder')[0];
+        this.updateStatusHolder = cont.getElementsByClassName('update-status-holder')[0];
 
+        this.valueHolder.addEventListener('keydown', (event) => {
+            if (event.keyCode === 13) { // Enter
+                this.publishValue();
+            }
+        });
+
+        dispatcher.subscribe(packetType, (packet) => { this.updateValue(packet); });
     }
 
-    this.publishValue = () => {
+    updateValue(packet) {
+        this.valueHolder.value = packet[this.keyName];
+    }
+
+    publishValue() {
         let packet = {};
-        packet['type'] = publishPacketType;
-        packet[keyName] = this.valueHolder.value;
+        packet['type'] = this.publishPacketType;
+        packet[this.keyName] = this.valueHolder.value;
 
         console.log(JSON.stringify(packet));
         socket.send(JSON.stringify(packet));
@@ -94,17 +108,6 @@ function EditableValueDisplay(cont, keyName, packetType, publishPacketType) {
             });
         }
     }
-
-    this.valueHolder.addEventListener('blur', (event) => {
-        this.publishValue();
-    });
-    this.valueHolder.addEventListener('keydown', (event) => {
-        if (event.keyCode === 13) { // Enter
-            this.publishValue();
-        }
-    });
-
-    dispatcher.subscribe(packetType, this.updateValue);
 }
 
 let valueDisplays = [];
@@ -123,44 +126,48 @@ document.addEventListener("keydown", function (event) {
             // updateControlValue(key, value - 1);
         }
     }
-
-    // Hook up ValueDisplays
-    document.getElementsByClassName('value-display').forEach((cont, idx, listObj) => {
-        if (cont.hasAttribute('data-packet-type')) {
-            let packetType = cont.getAttribute('data-packet-type');
-
-            let keyName = 'value';
-            if (cont.hasAttribute('data-key-name')) {
-                keyName = cont.getAttribute('data-key-name');
-            }
-
-            valueDisplays.push(new ValueDisplay(cont, keyName, packetType));
-        }
-    });
-    // Hook up EditableValueDisplays
-    document.getElementsByClassName('value-display-editable').forEach((cont, idx, listObj) => {
-        if (cont.hasAttribute('data-packet-type') && cont.hasAttribute('data-publish-packet-type')) {
-            let packetType = cont.getAttribute('data-packet-type');
-            let publishPacketType = cont.getAttribute('data-publish-packet-type');
-
-            let keyName = 'value';
-            if (cont.hasAttribute('data-key-name')) {
-                keyName = cont.getAttribute('data-key-name');
-            }
-
-            editableValueDisplays.push(new EditableValueDisplay(cont, keyName, packetType, publishPacketType));
-        }
-    });
 });
 
 window.addEventListener("load", function () {
     for (let field in controlFields) {
         let input = document.getElementById(field);
-        let text = document.getElementById(field + '-value');
-        text.value = input.value;
-        input.addEventListener('input', function () {
-            let value = this.value;
-            // updateControlValue(field, value);
-        }, input);
+        if (input != null) {
+            let text = document.getElementById(field + '-value');
+            text.value = input.value;
+            input.addEventListener('input', function () {
+                let value = this.value;
+                // updateControlValue(field, value);
+            }, input);
+        }
+    }
+
+    // Hook up ValueDisplays
+    let valConts = document.getElementsByClassName('value-display');
+    for (let i = 0; i < valConts.length;  i++) {
+        if (valConts[i].hasAttribute('data-packet-type')) {
+            let packetType = valConts[i].getAttribute('data-packet-type');
+
+            let keyName = 'value';
+            if (valConts[i].hasAttribute('data-key-name')) {
+                keyName = valConts[i].getAttribute('data-key-name');
+            }
+
+            valueDisplays.push(new ValueDisplay(valConts[i], keyName, packetType));
+        }
+    }
+    // Hook up EditableValueDisplays
+    let editableValConts = document.getElementsByClassName('value-display-editable');
+    for (let i = 0; i < editableValConts.length;  i++) {
+        if (editableValConts[i].hasAttribute('data-packet-type') && editableValConts[i].hasAttribute('data-publish-packet-type')) {
+            let packetType = editableValConts[i].getAttribute('data-packet-type');
+            let publishPacketType = editableValConts[i].getAttribute('data-publish-packet-type');
+
+            let keyName = 'value';
+            if (editableValConts[i].hasAttribute('data-key-name')) {
+                keyName = editableValConts[i].getAttribute('data-key-name');
+            }
+
+            editableValueDisplays.push(new EditableValueDisplay(editableValConts[i], keyName, packetType, publishPacketType));
+        }
     }
 });

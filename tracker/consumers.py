@@ -167,7 +167,7 @@ class Consumer(WebsocketConsumer):
                 'message': 'You need to select a launch before connecting.'}))
             return
 
-        self.channel_layer.send('upra-gnd',
+        async_to_sync(self.channel_layer.send)('upra-gnd',
             {'type': 'upra.connect', 'port': data['com'], 'baud': 57600, 'mission': self.selected_launch})
 
     def setup_predictor(self, data):
@@ -185,10 +185,10 @@ class Consumer(WebsocketConsumer):
 
         weatherdate = datetime.strptime(data['weatherdate'], "%Y-%m-%d %H:%M")
 
-        self.channel_layer.send('upra-gnd', {
+        async_to_sync(self.channel_layer.send)('upra-gnd', {
             'type': 'upra.predictor.start',
         })
-        self.channel_layer.send('upra-gnd', {
+        async_to_sync(self.channel_layer.send)('upra-gnd', {
             'type': 'upra.predictor.newflight',
             'mission': self.selected_launch,
             'weatherdate': weatherdate
@@ -200,11 +200,22 @@ class Consumer(WebsocketConsumer):
             'data': event['data']
         }))
 
+    def upra_balloonprops_set(self, event):
+        if self.selected_launch is None:
+            self.send(text_data=json.dumps({
+                'message': 'You need to select a launch before setting balloon props'}))
+            return
+
+        for propname in self.selected_launch.get_balloon_properties():
+            if propname in event:
+                setattr(self.selected_launch, propname, float(event[propname]));
+                self.selected_launch.save()
+
     def upra_predictor_balloonprops(self, event):
-        self.send(text_data=json.dumps({
-            'type': 'upra',
-            'balloonprops': event['balloonprops']
-        }))
+        packet = event['balloonprops']
+        packet['type'] = 'upra.balloonprops'
+
+        self.send(text_data=json.dumps(packet))
 
     def upra_predictor_prediction(self, event):
         self.send(text_data=json.dumps({
@@ -214,6 +225,11 @@ class Consumer(WebsocketConsumer):
 
     def receive(self, text_data):
         data = json.loads(text_data)
+
+        if 'action' not in data:
+            # Send this to ourselves as a channels event
+            async_to_sync(self.channel_layer.send)(self.channel_name, data);
+            return
 
         if data['action'] == 'init':
             if data['target'] == 'mam':
@@ -241,6 +257,10 @@ class Consumer(WebsocketConsumer):
             else:
                 self.select_launch(launch)
                 self.send(text_data=json.dumps({'type': 'checklist', 'tasks': launch.get_organized_tasks()}))
+                balloonprops = launch.get_balloon_properties()
+                balloonprops['type'] = 'upra.balloonprops'
+                self.send(text_data=json.dumps(balloonprops))
+
 
         if data['action'] == 'program-name':
             self.process = ConsoleConnector(data['data'])
@@ -263,7 +283,7 @@ class UpraGndWorker(SyncConsumer):
 
     def parse_upra(launch, message):
         match = re.search(UPRA_STRING, message)
-        self.channel_layer.send(launch.name, {
+        async_to_sync(self.channel_layer.group_send)(launch.name, {
             'type': 'upra.tlmpacket',
             'data': {
                 'callsign': match.group(1),
@@ -295,12 +315,12 @@ class UpraGndWorker(SyncConsumer):
     def handle_predictor_output(self, output_str):
         output = json.loads(output_str)
         if 'prediction' in output:
-            self.channel_layer.send(output['flightname'], {
+            async_to_sync(self.channel_layer.group_send)(output['flightname'], {
                 'type': 'upra.predictor.prediction',
                 'prediction': output['prediction']
             })
         if 'bprops' in output:
-            self.channel_layer.send(output['flightname'], {
+            async_to_sync(self.channel_layer.group_send)(output['flightname'], {
                 'type': 'upra.predictor.balloonprops',
                 'balloonprops': output['bprops']
             })
