@@ -168,7 +168,7 @@ class Consumer(WebsocketConsumer):
             return
 
         async_to_sync(self.channel_layer.send)('upra-gnd',
-            {'type': 'upra.connect', 'port': data['com'], 'baud': 57600, 'mission': self.selected_launch})
+            {'type': 'upra.connect', 'port': data['com'], 'baud': 57600, 'mission': self.selected_launch.name})
 
     def setup_predictor(self, data):
         if self.selected_launch == None:
@@ -210,6 +210,15 @@ class Consumer(WebsocketConsumer):
             if propname in event:
                 setattr(self.selected_launch, propname, float(event[propname]));
                 self.selected_launch.save()
+
+    def upra_gnd_frequency_set(self, event):
+        if self.selected_launch is None:
+            self.send(text_data=json.dumps({
+                'message': 'You need to select a launch before setting radio frequency'}))
+            return
+
+        event['mission'] = self.selected_launch.name
+        async_to_sync(self.channel_layer.send)('upra-gnd', event)
 
     def upra_predictor_balloonprops(self, event):
         packet = event['balloonprops']
@@ -338,6 +347,13 @@ class UpraGndWorker(SyncConsumer):
         connector.start_listening(
             callback=self.connections[event['mission']].consume_character)
 
+    def upra_gnd_frequency_set(self, event):
+        if event['mission'] not in self.connections:
+            return
+
+        self.connections[event['mission']].send(
+            '$GRSFQ,{1},*cc'.format(event['freq']) )
+
     def upra_predictor_start(self, event):
         if self.process_predictor is not None:
             return
@@ -350,10 +366,21 @@ class UpraGndWorker(SyncConsumer):
         if event['mission'] in self.flights_with_prediction:
             return
 
+        bprops = event['mission'].get_balloon_properties()
+
         self.process_predictor.send(json.dumps({
             'cmd': 'newflight',
             'flightname': event['mission'].name,
-            'balloonprops': event['mission'].get_balloon_properties(),
+            'balloonprops': {
+                'balloon_dry_mass': bprops['balloon_dry_mass']/1000,
+                'parachute_dry_mass': bprops['parachute_dry_mass']/1000,
+                'payload_dry_mass': bprops['payload_dry_mass']/1000,
+                'nozzle_lift': bprops['nozzle_lift']/1000,
+                'parachute_area': bprops['parachute_area'],
+                'parachute_drag_c': bprops['parachute_drag_c'],
+                'balloon_drag_c': bprops['balloon_drag_c'],
+                'design_burst_diam': bprops['design_burst_diam']
+            },
             'weatherdata': getWeatherData(event['weatherdate'])
         }))
 

@@ -61,6 +61,7 @@ def upra_communication(request):
         'pagetitle': 'Communication | UPRA',
         'maintabs': [
             {'id': 'init', 'title': 'Init', 'template': 'tracker/panels/init-upra.html'},
+            {'id': 'communicaton', 'title': 'Comms', 'template': 'tracker/panels/communication.html'},
             {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/panels/program-console.html'},
             {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
         ],
