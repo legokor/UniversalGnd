@@ -190,7 +190,8 @@ class Consumer(WebsocketConsumer):
         })
         async_to_sync(self.channel_layer.send)('upra-gnd', {
             'type': 'upra.predictor.newflight',
-            'mission': self.selected_launch,
+            'mission': self.selected_launch.name,
+            'bprops': self.selected_launch.get_balloon_properties(),
             'weatherdate': weatherdate
         })
 
@@ -290,9 +291,9 @@ class UpraGndWorker(SyncConsumer):
         self.flights_with_prediction = []
         self.process_predictor = None
 
-    def parse_upra(launch, message):
-        match = re.search(UPRA_STRING, message)
-        async_to_sync(self.channel_layer.group_send)(launch.name, {
+    def parse_upra(self, launchname, message):
+        match = re.search(self.UPRA_STRING, message)
+        async_to_sync(self.channel_layer.group_send)(launchname, {
             'type': 'upra.tlmpacket',
             'data': {
                 'callsign': match.group(1),
@@ -309,16 +310,16 @@ class UpraGndWorker(SyncConsumer):
             }
         })
 
-    def handle_upra_packet(self, launch, packet_str):
-        parse_upra(launch, packet_str)
+    def handle_upra_packet(self, launchname, packet_str):
+        self.parse_upra(launchname, packet_str)
         if self.process_predictor is not None:
             self.process_predictor.send(json.dumps({
                 'cmd': 'senduprapacket',
-                'flightname': launch.name,
+                'flightname': launchname,
                 'packet': packet_str}))
             self.process_predictor.send(json.dumps({
                 'cmd': 'predict',
-                'flightname': launch.name,
+                'flightname': launchname,
                 'timestep': 5}))
 
     def handle_predictor_output(self, output_str):
@@ -341,7 +342,7 @@ class UpraGndWorker(SyncConsumer):
 
         connector = SerialConnector(event['baud'], event['port'])
         self.connections[event['mission']] = Wrapper(
-            UPRA_STRING,
+            self.UPRA_STRING,
             partial(self.handle_upra_packet, event['mission']),
             connector.send)
         connector.start_listening(
@@ -366,11 +367,11 @@ class UpraGndWorker(SyncConsumer):
         if event['mission'] in self.flights_with_prediction:
             return
 
-        bprops = event['mission'].get_balloon_properties()
+        bprops = event['bprops']
 
         self.process_predictor.send(json.dumps({
             'cmd': 'newflight',
-            'flightname': event['mission'].name,
+            'flightname': event['mission'],
             'balloonprops': {
                 'balloon_dry_mass': bprops['balloon_dry_mass']/1000,
                 'parachute_dry_mass': bprops['parachute_dry_mass']/1000,
