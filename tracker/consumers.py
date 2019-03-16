@@ -351,9 +351,8 @@ class UpraGndWorker(SyncConsumer):
     def upra_gnd_frequency_set(self, event):
         if event['mission'] not in self.connections:
             return
-
-        self.connections[event['mission']].send(
-            '$GRSFQ,{1},*cc'.format(event['freq']) )
+        freq = int(float(event['freq'])*1000)
+        self.connections[event['mission']].send( '$GRSFQ,'+str(freq)+',*cc' )
 
     def upra_predictor_start(self, event):
         if self.process_predictor is not None:
