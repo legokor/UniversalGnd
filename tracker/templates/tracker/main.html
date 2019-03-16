@@ -11,6 +11,7 @@
             <div id="map-wrapper" class="col-md">
                 <div id="map"></div>
             </div>
+            <script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBNOqsN08MKI40-q8VWe81WMKtM8gM9cz0&callback=initMap'></script>
             {% endif %}
             <div class="col-md">
                 <div class="container-fluid">
@@ -52,7 +53,4 @@
     <script src='{% static 'js/charts.js' %}'></script>
     <script src='{% static 'js/mam.js' %}'></script>
     <script src='{% static 'js/upra.js' %}'></script>
-    <script async defer
-            src='https://maps.googleapis.com/maps/api/js?key=AIzaSyAtUYHs8xps4PTubrdK_06o8SMxFS41sFo&callback=initMap'>
-    </script>
 {% endblock %}
