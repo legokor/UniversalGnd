@@ -193,7 +193,7 @@ DATA = ['$$HAxUPRA,002,336677,+9500.000,+18888.000,41110,0170,006,002,',
 def listen():
     while running:
         connection, address = sck.accept()
-        print('client connected')
+        print('Client connected')
         thread = threading.Thread(target=digest_message, args=(connection,))
         thread.daemon = True
         thread.start()
@@ -201,16 +201,34 @@ def listen():
 
 def digest_message(conn):
     while running:
-        digest = conn.recv(1)
-        print(digest)
-        if digest == b'o':
-            print('sending')
-            for entry in DATA:
+        buf = ''
+        for entry in DATA:
+            try:
+                conn.settimeout(10.0)
+                buf = conn.recv(1024)
+                conn.settimeout(None)
+            except OSError:
+                pass
+            else:
+                msg = buf.decode('utf-8')
+                if msg != '':
+                    print('Got: '+msg)
+
+                    #Simulating the UPRA modem
+                    if '$GRSFQ' in msg:
+                        print('Sending: $GRACK,F,*3E')
+                        conn.send(bytes('$GRACK,F,*3E', 'UTF-8'))
+                    if '$GRHKR' in msg:
+                        print('Sending: $GRACK,S,*2B')
+                        conn.send(bytes('$GRACK,S,*2B', 'UTF-8'))
+
+            if sending:
+                print('Sending: '+entry)
                 conn.send(bytes(entry, 'UTF-8'))
-                time.sleep(0.2)
 
 
 running = True
+sending = True
 
 sck = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 sck.bind(('0.0.0.0', 1337))
@@ -224,3 +242,9 @@ while running:
     cmd = input('? ')
     if cmd == "exit":
         running = False
+    elif cmd == "nosend":
+        sending = False
+        print("Turned packet sending off")
+    elif cmd == "send":
+        sending = True
+        print("Turned packet sending on")

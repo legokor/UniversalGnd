@@ -340,7 +340,12 @@ class UpraGndWorker(SyncConsumer):
         if event['mission'] in self.connections:
             return
 
-        connector = SerialConnector(event['baud'], event['port'])
+        connector = None
+        if event['port'] == 'simulator':
+            connector = SocketConnector('0.0.0.0', 1337)
+        else:
+            connector = SerialConnector(event['baud'], event['port'])
+
         self.connections[event['mission']] = Wrapper(
             self.UPRA_STRING,
             partial(self.handle_upra_packet, event['mission']),
