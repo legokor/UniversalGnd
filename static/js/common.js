@@ -89,7 +89,7 @@ function loadChecklist(checklistId) {
     socket.send(JSON.stringify({'action': "fetch", 'id': checklistId}))
 }
 
-let dispatcher = new MessageDispatcher(window.location.host + "/ws", getLaunches);
+let dispatcher = new MessageDispatcher(window.location.host + "/ws/client", getLaunches);
 socket = dispatcher.webSocket;
 
 updateCurrentTime();

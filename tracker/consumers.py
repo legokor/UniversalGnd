@@ -195,6 +195,9 @@ class Consumer(WebsocketConsumer):
             'weatherdate': weatherdate
         })
 
+    def rawpacket(self, event):
+        self.send(text_data=json.dumps(event))
+
     def upra_tlmpacket(self, event):
         self.send(text_data=json.dumps({
             'type': 'upra',
