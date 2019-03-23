@@ -93,7 +93,7 @@ class RadioStationConsumer(JsonWebsocketConsumer):
                 self.layer_group_name_decorate(self.mission.name),
                 self.channel_name
             )
-            self.send_json({'type':'mission.select.ack'})
+            self.send_json({'type':'ack.mission.select'})
 
     def location_set(self, event):
         if self.attributes_missing(event, ['lat','lng','alt']):

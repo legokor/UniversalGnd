@@ -38,11 +38,9 @@ class UpraArsConsumer(RadioStationConsumer):
         if self.attributes_missing(event, ['packet']):
             return
 
-        # Forward the whole thing to be put into COM consoles
-        self.send_to_clients(event['packet'])
-
-        # Then parse it and send messages for various frontend widgets
         match = re.search(UPRA_TLMPACKET_FMT, event['packet'])
+        if not match:
+            return
 
         gpshour = int(match.group('hours'))
         gpsminute = int(match.group('mins'))

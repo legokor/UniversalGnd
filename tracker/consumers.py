@@ -198,6 +198,12 @@ class Consumer(WebsocketConsumer):
     def rawpacket(self, event):
         self.send(text_data=json.dumps(event))
 
+    def location_upra(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def temperature_upra(self, event):
+        self.send(text_data=json.dumps(event))
+
     def upra_tlmpacket(self, event):
         self.send(text_data=json.dumps({
             'type': 'upra',
