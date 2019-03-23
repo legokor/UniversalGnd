@@ -45,6 +45,7 @@ function Console(containerDiv, sendFunc) {
 }
 
 let debugConsole = null;
+let comConsole = null;
 
 window.addEventListener("load", function () {
     let dbgDiv = document.getElementById('debug-messages');
@@ -55,6 +56,18 @@ window.addEventListener("load", function () {
             function (text) { socket.send(JSON.stringify({'action': 'send', 'data': text})); }
         );
     }
+
+    let comConsoleDiv = document.getElementById('com-console');
+    if (comConsoleDiv != null) {
+        comConsole = new Console(
+            comConsoleDiv,
+            function () { }
+        );
+        dispatcher.subscribe('rawpacket', function (msg) {
+            comConsole.recieveMessage(msg['packet']);
+        });
+    }
+
 });
 
 function displayMessage(data) {

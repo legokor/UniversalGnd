@@ -48,6 +48,7 @@ def upra_flight(request):
             {'id': 'init', 'title': 'Init', 'template': 'tracker/panels/init-upra.html'},
             {'id': 'tasks', 'title': 'Tasks', 'template': 'tracker/panels/tasks.html'},
             {'id': 'balloon-properties', 'title': 'Balloon Props', 'template': 'tracker/panels/balloon-properties.html'},
+            {'id': 'telemetry', 'title': 'Telemetry', 'template': 'tracker/panels/telemetry.html'},
             {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/panels/program-console.html'},
             {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
         ],
@@ -62,6 +63,7 @@ def upra_communication(request):
         'maintabs': [
             {'id': 'init', 'title': 'Init', 'template': 'tracker/panels/init-upra.html'},
             {'id': 'communicaton', 'title': 'Comms', 'template': 'tracker/panels/communication.html'},
+            {'id': 'com-console', 'title': 'Comms Console', 'template': 'tracker/panels/com-console.html'}
             {'id': 'program-console', 'title': 'Program Console', 'template': 'tracker/panels/program-console.html'},
             {'id': 'debug-console', 'title': 'Debug Console', 'template': 'tracker/panels/debug-console.html'}
         ],

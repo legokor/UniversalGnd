@@ -45,8 +45,8 @@ function MessageDispatcher(webSocketUrl, openFunc) {
     }
 
     this.dispatchMessage = (msgTxt) => {
-        console.log(msgTxt);
         let msg = JSON.parse(msgTxt);
+        console.log(msg);
 
         displayMessage(msgTxt);
 
@@ -58,7 +58,7 @@ function MessageDispatcher(webSocketUrl, openFunc) {
         }
 
         Object.keys(this.msgCallbacks).forEach((type) => {
-            if (msg.type == type) {
+            if (type.startsWith(msg.type)) {
                 this.msgCallbacks[type].forEach( (callback) => {
                     callback(msg);
                 });
