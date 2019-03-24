@@ -58,7 +58,7 @@ function MessageDispatcher(webSocketUrl, openFunc) {
         }
 
         Object.keys(this.msgCallbacks).forEach((type) => {
-            if (type.startsWith(msg.type)) {
+            if (msg.type.startsWith(type)) {
                 this.msgCallbacks[type].forEach( (callback) => {
                     callback(msg);
                 });
