@@ -229,6 +229,7 @@ class Consumer(WebsocketConsumer):
 
         event['mission'] = self.selected_launch.name
         async_to_sync(self.channel_layer.send)('upra-gnd', event)
+        async_to_sync(self.channel_layer.send)(self.selected_launch.name+'-ars', event)
 
     def upra_predictor_balloonprops(self, event):
         packet = event['balloonprops']
