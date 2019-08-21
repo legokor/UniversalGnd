@@ -110,6 +110,11 @@ bin/
 # mypy
 .mypy_cache/
 
+# Node stuff
+node_modules
+# Webpack
+static/bundles
+
 # UPRA-Preictor binary
 predictor
 predictor.exe

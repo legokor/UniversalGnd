@@ -1,8 +1,13 @@
 {% extends 'tracker/base.html' %}
 
 {% load static %}
+{% load render_bundle from webpack_loader %}
 
 {% block title %}{{ pagetitle }} | {{ block.super }}{% endblock %}
+
+{% block header-content %}
+    <div id="react"></div>
+{% endblock %}
 
 {% block content %}
     <div id="main-container" class="container-fluid">
@@ -45,12 +50,5 @@
             </div>
         </div>
     </div>
-    <script src='{% static 'js/console.js' %}'></script>
-    <script src='{% static 'js/checklist.js' %}'></script>
-    <script src='{% static 'js/map.js' %}'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js'></script>
-    <script src='{% static 'js/visualizer.js' %}'></script>
-    <script src='{% static 'js/charts.js' %}'></script>
-    <script src='{% static 'js/mam.js' %}'></script>
-    <script src='{% static 'js/upra.js' %}'></script>
+    {% render_bundle 'main' %}
 {% endblock %}
