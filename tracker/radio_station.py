@@ -95,14 +95,14 @@ class RadioStationConsumer(JsonWebsocketConsumer):
             )
             self.send_json({'type':'ack.mission.select'})
 
-    def location_set(self, event):
+    def location_ars(self, event):
         if self.attributes_missing(event, ['lat','lng','alt']):
             return
         self.latitude = event['lat']
         self.longitude = event['lng']
         self.altitude = event['alt']
 
-    def name_set(self, event):
+    def name_ars(self, event):
         if self.attributes_missing(event, ['name']):
             return
         self.name = event['name']
