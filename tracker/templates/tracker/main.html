@@ -1,7 +1,6 @@
 {% extends 'tracker/base.html' %}
 
 {% load static %}
-{% load render_bundle from webpack_loader %}
 
 {% block title %}{{ pagetitle }} | {{ block.super }}{% endblock %}
 
@@ -50,5 +49,4 @@
             </div>
         </div>
     </div>
-    {% render_bundle 'main' %}
 {% endblock %}

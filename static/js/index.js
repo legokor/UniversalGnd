@@ -1,12 +1,9 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react"
+import ReactDOM from "react-dom"
 
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
+import { UtcClock } from "./UtcClock";
 
-const element = <Welcome name="world" />;
 ReactDOM.render(
-  element,
-  document.getElementById('react')
+    <UtcClock/>,
+    document.getElementById("header-time-wrapper")
 );
