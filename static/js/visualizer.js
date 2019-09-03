@@ -51,21 +51,6 @@ function updateControlValue(name, value) {
     text.value = value;
 }
 
-class ValueDisplay {
-    constructor(cont, keyName, packetType) {
-        this.keyName = keyName;
-        this.packetType = packetType;
-
-        let valueHolder = cont.getElementsByClassName('value-holder')[0];
-
-        dispatcher.subscribe(packetType, (packet) => { this.updateValue(packet); });
-    }
-
-    updateValue(packet) {
-        this.valueHolder.innerText = packet[this.keyName];
-    }
-}
-
 
 class EditableValueDisplay {
 
@@ -110,7 +95,6 @@ class EditableValueDisplay {
     }
 }
 
-let valueDisplays = [];
 let editableValueDisplays = [];
 
 document.addEventListener("keydown", function (event) {
@@ -141,20 +125,6 @@ window.addEventListener("load", function () {
         }
     }
 
-    // Hook up ValueDisplays
-    let valConts = document.getElementsByClassName('value-display');
-    for (let i = 0; i < valConts.length;  i++) {
-        if (valConts[i].hasAttribute('data-packet-type')) {
-            let packetType = valConts[i].getAttribute('data-packet-type');
-
-            let keyName = 'value';
-            if (valConts[i].hasAttribute('data-key-name')) {
-                keyName = valConts[i].getAttribute('data-key-name');
-            }
-
-            valueDisplays.push(new ValueDisplay(valConts[i], keyName, packetType));
-        }
-    }
     // Hook up EditableValueDisplays
     let editableValConts = document.getElementsByClassName('value-display-editable');
     for (let i = 0; i < editableValConts.length;  i++) {
