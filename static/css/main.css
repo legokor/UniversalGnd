@@ -135,6 +135,21 @@ input[type=checkbox] {
     box-shadow: none;
 }
 
+.loading-placeholder {
+    display: block;
+    background-color: rgba(128,128,128,0.25);
+    border-radius: 2px;
+    height: 1em;
+    animation-name: placeholder-fade;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+@keyframes placeholder-fade {
+    from { background-color: rgba(128,128,128,0.25); }
+    to   { background-color: rgba(128,128,128,0.05); }
+}
+
 .task-matrix-wrapper {
     position: relative;
 	border-radius: 5px;
