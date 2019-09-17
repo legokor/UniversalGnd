@@ -39,10 +39,12 @@ class Launch(models.Model):
         return [
             dict(
                tasks=[task.serialized_fields() for task in group.task_set.order_by('projected_timestamp').all()],
-               name=group.name
+               name=group.name,
+               id=group.id
             ) for group in self.taskgroup_set.all()
         ] + [{
-            'orphaned': True,
+            'name': 'Other',
+            'id': -1,
             'tasks': [task.serialized_fields() for task in
                       Task.objects.filter(launch=self, group=None).order_by('projected_timestamp')],
         }]
