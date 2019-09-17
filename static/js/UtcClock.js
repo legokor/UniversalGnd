@@ -1,18 +1,6 @@
 import React from 'react'
 
-function prettifyNumber(number) {
-    return number < 10 ? "0" + number : number.toString();
-}
-
-function toUTCTimeString(date) {
-    let year = date.getUTCFullYear();
-    let month = prettifyNumber(date.getUTCMonth() + 1);
-    let day = prettifyNumber(date.getUTCDate());
-    let hour = prettifyNumber(date.getUTCHours());
-    let minute = prettifyNumber(date.getUTCMinutes());
-    let second = prettifyNumber(date.getUTCSeconds());
-    return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
-}
+import { getUTCStringFromDate } from "./app-utils"
 
 export class UtcClock extends React.Component {
 
@@ -42,7 +30,7 @@ export class UtcClock extends React.Component {
 
     render() {
         return (
-            <p className="utc-clock">The current time is { toUTCTimeString(this.state.date) } UTC</p>
+            <p className="utc-clock">The current time is { getUTCStringFromDate(this.state.date) } UTC</p>
         );
     }
 
