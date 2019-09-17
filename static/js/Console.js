@@ -12,9 +12,9 @@ export class Console extends React.Component {
     }
 
     receiveMessage(msg) {
-        this.setState((prevState) => ({
+        this.setState((prevState) => {
             messages: [...prevState.messages, msg]
-        }));
+        });
     }
 
     sendMessage() {
@@ -39,7 +39,7 @@ export class Console extends React.Component {
     }
 
     render() {
-        const messages = this.state.messages.map((msg) => <ConsoleMessage value={msg}/>)
+        const messages = this.state.messages.map((msg) => <ConsoleMessage value={msg}/>);
 
         return (
             <div className="console">
