@@ -18,34 +18,7 @@
             <script async defer src='https://maps.googleapis.com/maps/api/js?key=AIzaSyBNOqsN08MKI40-q8VWe81WMKtM8gM9cz0&callback=initMap'></script>
             {% endif %}
             <div class="col-md">
-                <div class="container-fluid">
-                    <div class="row">
-                        <ul id="main-tabs" class="nav nav-tabs" role="tablist">
-                        {% for tab in maintabs %}
-                            <li class="nav-item">
-                                <a class="nav-link{% if forloop.first %} active{% endif %}"
-                                   id="{{ tab.id }}-tab"
-                                   data-toggle="tab" href="#{{ tab.id }}" role="tab">
-                                    {{ tab.title }}
-                                </a>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                        <div id="main-tab-content" class="tab-content">
-                        {% for tab in maintabs %}
-                            <div id="{{ tab.id }}"
-                                 class="tab-pane{% if forloop.first %} show active{% endif %}">
-                                {% include tab.template %}
-                            </div>
-                        {% endfor %}
-                        </div>
-                    </div>
-                    {% if bottom_panel_template %}
-                    <div id='bottom-panel'>
-                        {% include bottom_panel_template %}
-                    </div>
-                    {% endif %}
-                </div>
+                <div id="gnd-app"></div>
             </div>
         </div>
     </div>

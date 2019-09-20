@@ -13,6 +13,19 @@ from .consumers import broadcast
 def index(request):
     return render(request, 'tracker/index.html')
 
+def hab_gnd(request, team, mission):
+    context = {
+        'pagetitle': mission,
+        'showmap': True
+    }
+    return render(request, 'tracker/main.html', context)
+
+def rover_gnd(request, team, mission, perspective):
+    pass
+
+def drone_gnd(request, team, mission, perspective):
+    pass
+
 def mam(request):
     context = {
         'pagetitle': 'MaM',
