@@ -3,9 +3,9 @@ import { AppConstants } from "./app-constants"
 // Controls the connection to the Mission Control Server and
 // dispatches received messages based on their 'type' attribute,
 // by calling the registered callbacks of that type
-class MissionControlConnection(webSocketUrl) {
+class MissionControlConnection {
 
-    constructor() {
+    constructor(webSocketUrl) {
         this.msgCallbacks = {};
 
         this.webSocket = new WebSocket(webSocketUrl);
