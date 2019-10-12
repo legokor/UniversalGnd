@@ -32,7 +32,7 @@ class UpraArsConsumer(RadioStationConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.forwarded_types = ['rawpacket']
+        self.forwarded_types = ['rawpacket', 'location.upra', 'temperature.upra']
 
     def rawpacket_upra_telemetry(self, event):
         if self.attributes_missing(event, ['packet']):
