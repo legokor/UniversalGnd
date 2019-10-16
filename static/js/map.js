@@ -47,6 +47,16 @@ function parsePredictedFlightPath(prediction) {
     }
 }
 
+export function whenMapsLoaded(callbackFunc) {
+    if (typeof google !== "undefined") {
+        callbackFunc();
+    } else {
+        window.setTimeout(() => {
+            whenMapsLoaded(callbackFunc);
+        }, 100);
+    }
+}
+
 export function initMap() {
     let coordinates = {lat: 47.4734, lng: 19.0598};
     map = new google.maps.Map(document.getElementById('map'), {

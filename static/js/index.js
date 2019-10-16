@@ -4,10 +4,9 @@ import ReactDOM from "react-dom"
 import { UtcClock } from "./UtcClock";
 import { GndApp } from "./GndApp";
 
-import * as map from "./map"
+import { whenMapsLoaded, initMap } from "./map"
 
-// Make this global so the GMaps API can see it.
-windown.initMap = map.initMap;
+whenMapsLoaded(initMap);
 
 ReactDOM.render(
     <UtcClock/>,
