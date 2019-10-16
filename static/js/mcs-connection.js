@@ -1,4 +1,4 @@
-import { AppConstants } from "./app-constants"
+import { CLIENT_WS_URL } from "./app-constants"
 
 // Controls the connection to the Mission Control Server and
 // dispatches received messages based on their 'type' attribute,
@@ -21,6 +21,10 @@ class MissionControlConnection {
         this.webSocket.onclose = function () {
             alert('Connection to the server was lost, refresh to reconnect!');
         };
+    }
+
+    onMcsConnectionEstablished() {
+        // TODO: Subscribe to given mission, etc.
     }
 
     // Register a callback to be called for every
@@ -62,4 +66,4 @@ class MissionControlConnection {
 
 }
 
-export const missionControlConnection = new MissionControlConnection(AppConstants.CLIENT_WS_URL);
+export const missionControlConnection = new MissionControlConnection(CLIENT_WS_URL);
