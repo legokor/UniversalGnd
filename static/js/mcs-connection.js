@@ -24,7 +24,10 @@ class MissionControlConnection {
     }
 
     onMcsConnectionEstablished() {
-        // TODO: Subscribe to given mission, etc.
+        this.sendData({
+            "action": "fetch-launch",
+            "id": gndContext.mission.id
+        });
     }
 
     // Register a callback to be called for every
@@ -40,15 +43,6 @@ class MissionControlConnection {
     dispatchMessage(msgTxt) {
         let msg = JSON.parse(msgTxt);
         console.log(msg);
-
-        displayMessage(msgTxt);
-
-        // Fall back to the old messageParse function
-        // if we don't know the type or there is none
-        if (!('type' in msg) ||  !(msg['type'] in this.msgCallbacks) ) {
-            messageParse(msg);
-            return;
-        }
 
         Object.keys(this.msgCallbacks).forEach((type) => {
             if (msg.type.startsWith(type)) {
@@ -66,4 +60,5 @@ class MissionControlConnection {
 
 }
 
+export const gndContext = JSON.parse(document.getElementById('gnd-context').textContent);
 export const missionControlConnection = new MissionControlConnection(CLIENT_WS_URL);

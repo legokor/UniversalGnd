@@ -23,3 +23,7 @@
         </div>
     </div>
 {% endblock %}
+
+{% block gnd-context %}
+{{ gnd_context | json_script:"gnd-context" }}
+{% endblock %}
