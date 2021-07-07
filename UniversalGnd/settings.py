@@ -20,6 +20,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'channels',
+    'webpack_loader',
     'tracker.apps.TrackerConfig',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,6 +57,13 @@ TEMPLATES = [
         },
     },
 ]
+
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    }
+}
 
 ASGI_APPLICATION = "UniversalGnd.routing.application"
 

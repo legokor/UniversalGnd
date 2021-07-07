@@ -6,12 +6,34 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Task
+from .models import Launch, Task
 from .consumers import broadcast
 
 
 def index(request):
     return render(request, 'tracker/index.html')
+
+def hab_gnd(request, team_slug, mission_slug):
+
+    mission = Launch.objects.get(slug=mission_slug)
+
+    context = {
+        'pagetitle': mission.name,
+        'showmap': True,
+        'gnd_context': {
+            'mission': {
+                'id': mission.id,
+                'name': mission.name
+            },
+        }
+    }
+    return render(request, 'tracker/main.html', context)
+
+def rover_gnd(request, team, mission, perspective):
+    pass
+
+def drone_gnd(request, team, mission, perspective):
+    pass
 
 def mam(request):
     context = {

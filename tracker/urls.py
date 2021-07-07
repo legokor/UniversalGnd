@@ -5,10 +5,8 @@ from . import views
 urlpatterns = [
     path('update-item/<int:pk>', views.update_task, name='toggle'),
     path('checklist', views.admin, name='admin'),
-    path('upra/flight', views.upra_flight, name='upra_flight'),
-    path('upra/com', views.upra_communication, name='upra_communication'),
-    path('upra/telemetry', views.upra_telemetry, name='upra_telemetry'),
-    path('mam/mam-2018', views.mam, name='mam_2018'),
-    path('qc/main', views.quadcopter, name='qc_main'),
+    path('hab/<slug:team_slug>/<slug:mission_slug>/', views.hab_gnd, name='hab_gnd'),
+    path('rvr/<slug:team_slug>/<slug:mission_slug>/', views.rover_gnd, name='rover_gnd'),
+    path('drn/<slug:team_slug>/<slug:mission_slug>/', views.drone_gnd, name='drone_gnd'),
     path('', views.index, name='index'),
 ]

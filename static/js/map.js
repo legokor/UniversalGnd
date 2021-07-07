@@ -1,3 +1,5 @@
+import { missionControlConnection as mcsc } from "./mcs-connection"
+
 let map = undefined;
 let flightPath = undefined;
 let predictedFlightPath = undefined;
@@ -45,7 +47,17 @@ function parsePredictedFlightPath(prediction) {
     }
 }
 
-function initMap() {
+export function whenMapsLoaded(callbackFunc) {
+    if (typeof google !== "undefined") {
+        callbackFunc();
+    } else {
+        window.setTimeout(() => {
+            whenMapsLoaded(callbackFunc);
+        }, 100);
+    }
+}
+
+export function initMap() {
     let coordinates = {lat: 47.4734, lng: 19.0598};
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 16,
@@ -58,7 +70,7 @@ function initMap() {
     });
 }
 
-function placeMarker(location) {
+export function placeMarker(location) {
     if (destination === undefined) {
         updateDestination(location);
         let marker = new google.maps.Marker({
